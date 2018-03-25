@@ -1,6 +1,6 @@
 //Creates a global JFrame to use
 
-package game;
+package adventure;
 
 import javax.swing.JFrame;
 
