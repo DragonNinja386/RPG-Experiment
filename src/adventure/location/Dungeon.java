@@ -13,29 +13,26 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import adventure.Combat;
-import adventure.Global;
+import adventure.Events;
 import adventure.MainFrame;
-import adventure.MainGame;
-import adventure.character.Enemy;
-import adventure.character.Player;
-import adventure.item.Consumable;
-import adventure.item.Equipment;
+import adventure.character.*;
+import adventure.item.*;
 
 public class Dungeon
-{
+{	
 	//Dungeon variables
-	private static Room[] rooms;
-	private static int roomNumber;
-	private static int dirNumCount = 0;
-	private static MainFrame mainFrame;
-	private static JPanel dungeonP;
-	private static Player player;
-	private static Enemy[] enemy;
-	private static Equipment equip;
-	private static Consumable consume;
+	private Events events;
+	private Room[] rooms;
+	private int roomNumber;
+	private int dirNumCount = 0;
+	private MainFrame mainFrame;
+	private JPanel dungeonP;
+	private Player player;
+	private Enemy[] enemy;
+	private Equipment equip;
+	private Consumable consume;
 	
-	private static class Room
+	private class Room
 	{
 		//Room variables
 		private JPanel roomP;
@@ -153,10 +150,7 @@ public class Dungeon
 					exitB.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e)
 						{
-							Global.player = player;
-							mainFrame.remove(dungeonP);
-							mainFrame.remove(roomP);
-							new MainGame(mainFrame);
+							events.mainScreen();
 						}
 					});
 					dirNumCount++;
@@ -201,80 +195,21 @@ public class Dungeon
 	
 	
 	//Normal constructor
-	public Dungeon(MainFrame mainFrame, String dungeonName)
+	public Dungeon(MainFrame mainFrame, Events events)
 	{
-		Dungeon.mainFrame = mainFrame;
-		player = Global.player;
+		this.events = events;
+		this.mainFrame = mainFrame;
 		
 		dungeonP = new JPanel();
 		dungeonP.setLayout(null);
 		dungeonP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 		mainFrame.setContentPane(dungeonP);
 		
-		if (dungeonName.equalsIgnoreCase("dungeon"))
-		{
-			dungeon(0);
-		}
-		else
-		{
-			JLabel errorL = new JLabel("Invalid Dungeon, please report this bug ASAP");
-			errorL.setBounds(100, 10, 500, 100);
-			dungeonP.add(errorL);
-			
-			JButton returnB = new JButton("RETURN");
-			returnB.setBounds(400, 400, 100, 30);
-			returnB.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					mainFrame.remove(dungeonP);
-					new MainGame(mainFrame);
-				}
-			});
-			dungeonP.add(returnB);
-		}
-	}
-	
-	//Constructor for returning from combat
-	public Dungeon(MainFrame mainFrame, String dungeonName, int roomNumber)
-	{
-		Dungeon.mainFrame = mainFrame;
-		player = Global.player;
 		
-		dungeonP = new JPanel();
-		dungeonP.setLayout(null);
-		dungeonP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-		mainFrame.setContentPane(dungeonP);
-		
-		if (dungeonName.equalsIgnoreCase("dungeon"))
-		{
-			rooms[roomNumber].completed = true;
-			Global.dungeonComp[roomNumber] = true;
-			dungeon(roomNumber);
-		}
-		else
-		{
-			JLabel errorL = new JLabel("Invalid Dungeon, please report this bug ASAP");
-			errorL.setBounds(100, 10, 500, 100);
-			dungeonP.add(errorL);
-			
-			JButton returnB = new JButton("RETURN");
-			returnB.setBounds(400, 400, 100, 30);
-			returnB.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					mainFrame.remove(dungeonP);
-					new MainGame(mainFrame);
-				}
-			});
-			dungeonP.add(returnB);
-		}
 	}
+
 	
-	public static void dungeon(int roomNumber)
+	public void dungeon(int roomNumber)
 	{
 		//Room creation
 		rooms = new Room[7];
@@ -310,19 +245,12 @@ public class Dungeon
 		rooms[6].desc("<html><body style='width:300px'> The boss should be here");
 		rooms[6].direction("south", new int[] {5});
 		
-		Global.dungeonComp[0] = true;
-		//Remove?
-		for (int i = 0; i < rooms.length; i++)
-		{
-			rooms[i].completed = Global.dungeonComp[i];
-		}
-		
 		mainFrame.setContentPane(rooms[roomNumber].roomP);
 		rooms[0].roomP.repaint();
 		rooms[0].roomP.revalidate();
 	}
 	
-	public static void switchRoom(JPanel jp, String roomType)
+	private void switchRoom(JPanel jp, String roomType)
 	{
 		JButton openB = new JButton("OPEN");
 		
@@ -356,7 +284,6 @@ public class Dungeon
 						rooms[roomNumber].roomP.add(itemL);
 						rooms[roomNumber].roomP.remove(openB);
 						rooms[roomNumber].completed = true;
-						Global.dungeonComp[roomNumber] = true;
 					}
 					else
 					{
@@ -366,7 +293,6 @@ public class Dungeon
 						rooms[roomNumber].roomP.add(itemL);
 						rooms[roomNumber].roomP.remove(openB);
 						rooms[roomNumber].completed = true;
-						Global.dungeonComp[roomNumber] = true;
 					}
 					jp.repaint();
 					jp.revalidate();
@@ -387,7 +313,6 @@ public class Dungeon
 		else
 		{
 			rooms[roomNumber].completed = true;
-			Global.dungeonComp[roomNumber] = true;
 			mainFrame.setContentPane(jp);
 			jp.repaint();
 			jp.revalidate();

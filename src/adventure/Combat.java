@@ -19,18 +19,15 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.*;
 
-import adventure.character.Enemy;
-import adventure.character.Player;
-import adventure.item.Consumable;
-import adventure.item.Item;
-import adventure.item.Spells;
-import adventure.location.Dungeon;
+import adventure.character.*;
+import adventure.item.*;
 
 public class Combat
 {
 	//Image Variables
 
 	//Swing variables
+	private Events events;
 	private MainFrame mainFrame;
 	private JPanel combatP;
 	private String location;
@@ -66,8 +63,9 @@ public class Combat
 
     private Grid[][] gridButton;
 
-    public Combat(MainFrame mainFrame) {
+    public Combat(MainFrame mainFrame, Events events) {
         //Initialize variables
+    	this.events = events;
         this.mainFrame = mainFrame;
 
         combatP = new JPanel();
@@ -77,10 +75,14 @@ public class Combat
         
     }
     
+    public void setPlayer(Player player)
+	{
+		this.player = player;
+	}
+    
     public void initiateCombat(Enemy[] enemy, int w, int h, int obstacleNum)
     {
     	this.enemy = new Enemy[]{new Enemy("The Great Wall of America", 10, "Grey", "Grey", 70, 1, 1, 1), new Enemy("The Great Wall of America", 10, "Grey", "Grey", 75, 3, 2, 3)};
-        player = Global.player;
         width = w;
         height = h;
         gridButton = new Grid[width][height];
@@ -1221,16 +1223,13 @@ public class Combat
 					player.gainExp(enemy[i].getExp());
 				}
 				player.addHealth();
-				Global.player = player;
-				mainFrame.remove(combatP);
 				if (location.contains("newgame"))
 				{
-					new MainGame(mainFrame);
+					events.mainScreen();
 				}
 				else if (location.contains("dungeon"))
 				{
-					String[] locationData = location.split(" ");
-					new Dungeon(mainFrame, locationData[1], Integer.parseInt(locationData[2]));
+					events.event("DUNGEON", "");
 				}
 			}
 		});
@@ -1265,9 +1264,8 @@ public class Combat
 			public void actionPerformed(ActionEvent e)
 			{
 				player.addHealth();
-				Global.player = player;
 				mainFrame.remove(combatP);
-				new MainGame(mainFrame);
+				//TODO switch to mainGame
 			}
 		});
 		combatP.add(continueB);

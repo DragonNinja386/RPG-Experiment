@@ -27,6 +27,7 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class MainGame
 {
+	private Events events;
 	private MainFrame mainFrame;
 	private JPanel mainGameP;
 	private Player player;
@@ -38,10 +39,12 @@ public class MainGame
 	//Loop Variables
 	private int i, a, pageNumber;
 	private ArrayList<JButton> invButtons;
-	private JButton[] locButtons;
+	private JButton[] locationButtons;
 	
-	public MainGame(MainFrame mainFrame)
+	public MainGame(MainFrame mainFrame, Events events)
 	{
+		this.player = player;
+		this.events = events;
 		this.mainFrame = mainFrame;
 		
 		mainGameP = new JPanel();
@@ -49,13 +52,17 @@ public class MainGame
 		mainGameP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 		mainFrame.setContentPane(mainGameP);
 		
-		player = Global.player;
-		
 		mainScreen();
 	}
 	
-	private void mainScreen()
+	public void setPlayer(Player player)
 	{
+		this.player = player;
+	}
+	
+	public void mainScreen()
+	{
+		mainFrame.setContentPane(mainGameP);
 		mainGameP.removeAll();
 		
 		JLabel inDevelopmentL = new JLabel("This is what the main game screen would look like, but i'm to lazy to fully design it right now.");
@@ -343,21 +350,20 @@ public class MainGame
 		currentL.setBounds(100, 100, 300, 30);
 		mainGameP.add(currentL);
 		
-		locButtons = new JButton[4];
-		String[] locationEvent = new String[locButtons.length];
+		locationButtons = new JButton[4];
 		if (player.getLocation().equals("SOUTH"))
 		{
-			locButtons[0] = new JButton("THE WALL");
-			locButtons[1] = new JButton("BORDER CROSSING");
-			locButtons[2] = new JButton("TOWN1");
-			locButtons[3] = new JButton("DUNGEON");
-			locationEvent[0] = new String("EXPLORE");
-			locationEvent[1] = new String("EXPLORE");
-			locationEvent[2] = new String("TOWN");
-			locationEvent[3] = new String("DUNGEON");
+			locationButtons[0] = new JButton("THE WALL");
+			locationButtons[1] = new JButton("BORDER CROSSING");
+			locationButtons[2] = new JButton("TOWN1");
+			locationButtons[3] = new JButton("DUNGEON");
+			locationButtons[0].setName("EXPLORE");
+			locationButtons[2].setName("EXPLORE");
+			locationButtons[2].setName("TOWN");
+			locationButtons[3].setName("DUNGEON");
 		}
 		
-		for (i = 0, a = 0; i < locButtons.length; i++, a++)
+		for (i = 0, a = 0; i < locationButtons.length; i++, a++)
 		{
 			if (a == 4)
 			{
@@ -365,31 +371,28 @@ public class MainGame
 			}
 			if (i < 4)
 			{
-				locButtons[i].setBounds((110 * a) + 10,360,100,30);
-				mainGameP.add(locButtons[i]);
+				locationButtons[i].setBounds((110 * a) + 10,360,100,30);
+				mainGameP.add(locationButtons[i]);
 			}
 			else if (i < 8)
 			{
-				locButtons[i].setBounds((110 * a) + 10,400,100,30);
-				mainGameP.add(locButtons[i]);
+				locationButtons[i].setBounds((110 * a) + 10,400,100,30);
+				mainGameP.add(locationButtons[i]);
 			}
 			else if (i % 8 < 4)
 			{
-				locButtons[i].setBounds((110 * a) + 10,360,100,30);
+				locationButtons[i].setBounds((110 * a) + 10,360,100,30);
 			}
 			else
 			{
-				locButtons[i].setBounds((110 * a) + 10,400,100,30);
+				locationButtons[i].setBounds((110 * a) + 10,400,100,30);
 			}
-			int index = i;
-			locButtons[i].addActionListener(new ActionListener()
+			locationButtons[i].addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					Global.player = player;
-					mainFrame.remove(mainGameP);
-					new Events(mainFrame, locationEvent[index], locButtons[index].getText());
+					events.event(((JButton)e.getSource()).getName(), ((JButton)e.getSource()).getText());
 				}
 			});
 		}
@@ -400,32 +403,32 @@ public class MainGame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				if (pageNumber == ((locButtons.length - 1) / 8) + 1)
+				if (pageNumber == ((locationButtons.length - 1) / 8) + 1)
 				{
-					for (int i = 0; i < locButtons.length; i++)
+					for (int i = 0; i < locationButtons.length; i++)
 					{
 						if (i < 8)
 						{
-							mainGameP.add(locButtons[i]);
+							mainGameP.add(locationButtons[i]);
 						}
 						else
 						{
-							mainGameP.remove(locButtons[i]);
+							mainGameP.remove(locationButtons[i]);
 						}
 					}
 					pageNumber = 1;
 				}
 				else
 				{
-					for (int i = 0; i < locButtons.length; i++)
+					for (int i = 0; i < locationButtons.length; i++)
 					{
 						if (i >= 8 * pageNumber && i <= (pageNumber + 1) * 8)
 						{
-							mainGameP.add(locButtons[i]);
+							mainGameP.add(locationButtons[i]);
 						}
 						else
 						{
-							mainGameP.remove(locButtons[i]);
+							mainGameP.remove(locationButtons[i]);
 						}
 					}
 					pageNumber++;
@@ -434,7 +437,7 @@ public class MainGame
 				mainGameP.revalidate();
 			}
 		});
-		if (locButtons.length > 8)
+		if (locationButtons.length > 8)
 		{
 			mainGameP.add(nextB);
 		}
@@ -471,7 +474,6 @@ public class MainGame
 				
 				//Save variables
 				save.writeObject(player);
-				save.writeObject(Global.dungeonComp);
 				
 				save.close();
 				saveFile.close();

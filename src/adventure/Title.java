@@ -23,6 +23,7 @@ import adventure.item.Spells;
 public class Title
 {
 	//App variables
+	private Events events;
 	private MainFrame mainFrame;
 	private final int APPLICATION_HEIGHT = 500;
 	private final int APPLICATION_WIDTH = 600;
@@ -37,22 +38,23 @@ public class Title
 	}
 	
 	//Game starts here
-	public Title(MainFrame mainFrame)
+	public Title(MainFrame mainFrame, Events events)
 	{
 		loadImages();
 		
+		this.events = events;
 		this.mainFrame = mainFrame;
 		
 		titleP = new JPanel();
 		titleP.setLayout(null);
 		titleP.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		mainFrame.setContentPane(titleP);
-		
-		titleScreen();
 	}
 
-	private void titleScreen()
+	public void titleScreen()
 	{
+		mainFrame.setContentPane(titleP);
+		
 		JLabel titleL = new JLabel("ADVENTURE");
 		titleL.setBounds(200, 100, 100, 30);
 		titleP.add(titleL);
@@ -395,9 +397,9 @@ public class Title
 				{
 					newPlayer.addItem(new Consumable("Health Potion", "A strange red substance flows within the bottle", "HEAL", 12));
 				}
-				Global.player = newPlayer;
 				
-				//TODO
+				events.setPlayer(newPlayer);
+				events.mainScreen();
 			}
 		});
 		noB.addActionListener(new ActionListener()
@@ -430,21 +432,13 @@ public class Title
 				
 				Player newPlayer = null;
 				newPlayer = (Player) save.readObject();
-				Global.dungeonComp = (boolean[]) save.readObject();
 				
-				Global.player = newPlayer;
+				events.setPlayer(newPlayer);
 	
 				saveFile.close();
 				save.close();
 				
-				mainFrame.remove(titleP);
-				
-				for (boolean i : Global.dungeonComp)
-				{
-					System.out.println(i);
-				}
-				
-				new MainGame(mainFrame);
+				events.mainScreen();
 			}
 			catch(Exception exc)
 			{

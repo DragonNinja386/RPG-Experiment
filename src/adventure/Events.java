@@ -11,27 +11,60 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import adventure.character.Enemy;
-import adventure.location.Dungeon;
-import adventure.location.Town;
+import adventure.character.*;
+import adventure.location.*;
 
 public class Events
 {
+	private Dungeon dungeon;
+	private Town town;
 	private Combat combat;
+	private Title title;
+	private MainGame mainGame;
+	private Player player;
+	
 	private MainFrame mainFrame;
 	private JPanel eventsP;
 	
-	public Events(MainFrame mainFrame, String event, String info)
+	public Events(MainFrame mainFrame)
 	{
+		dungeon = new Dungeon(mainFrame, this);
+		town = new Town(mainFrame, this);
+		combat = new Combat(mainFrame, this);
+		title = new Title(mainFrame, this);
+		mainGame = new MainGame(mainFrame, this);
+		
 		this.mainFrame = mainFrame;
 		
 		eventsP = new JPanel();
 		eventsP.setLayout(null);
 		eventsP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 		mainFrame.setContentPane(eventsP);
+		
+		title.titleScreen();
 	}
 	
-	public void explore(ActionListener al, String location)
+	public void setPlayer(Player player)
+	{
+		combat.setPlayer(player);
+		mainGame.setPlayer(player);
+		town.setPlayer(player);
+		this.player = player;
+	}
+	
+	//Switches game state to mainGame
+	public void mainScreen()
+	{
+		mainGame.mainScreen();
+	}
+	
+	public void event(String info, String name)
+	{
+		if (info.equalsIgnoreCase("town"))
+			town(name);
+	}
+	
+	private void explore(ActionListener al, String location)
 	{	
 		JButton continueB;
 		JLabel foundL;
@@ -82,7 +115,7 @@ public class Events
 					public void actionPerformed(ActionEvent e)
 					{
 						mainFrame.remove(eventsP);
-						new MainGame(mainFrame);
+						//TODO switch to mainGame
 					}
 				});
 				eventsP.add(returnB);
@@ -94,19 +127,17 @@ public class Events
 		eventsP.revalidate();
 	}
 	
-	public void town(String info)
+	private void town(String info)
 	{
-		mainFrame.remove(eventsP);
-		new Town(mainFrame, info);
+		town.townName1();
 	}
 	
-	public void dungeon(String info)
+	private void dungeon(String info)
 	{
-		mainFrame.remove(eventsP);
-		new Dungeon(mainFrame, info);
+		dungeon.dungeon(0);
 	}
 	
-	public void combat(Enemy[] enemy, int w, int h, int obstacleNum)
+	private void combat(Enemy[] enemy, int w, int h, int obstacleNum)
 	{
 		combat.initiateCombat(enemy, w, h, obstacleNum);
 	}

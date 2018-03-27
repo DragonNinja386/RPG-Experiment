@@ -24,18 +24,9 @@ public class Game
 			System.out.println("Could not load System look");
 		}
 		
-		//Initialize global variables
 		MainFrame mainFrame = new MainFrame(); //Creates frame to put game on
-		for (@SuppressWarnings("unused") boolean i : Global.dungeonComp)
-		{
-			i = false;
-		}
-		for (@SuppressWarnings("unused") boolean i : Global.locationClear)
-		{
-			i = false;
-		}
 		
-		new Title(mainFrame); //Starts game
+		new Events(mainFrame);
 	}
 
 }

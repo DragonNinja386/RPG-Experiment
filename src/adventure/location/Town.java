@@ -11,57 +11,37 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import adventure.Global;
+import adventure.Events;
 import adventure.MainFrame;
-import adventure.MainGame;
 import adventure.character.Player;
-import adventure.item.Equipment;
+import adventure.item.*;
 
 public class Town
 {
+	private Events events;
 	private MainFrame mainFrame;
 	private JPanel townP;
 	private Player player;
 	
-	public Town(MainFrame mainFrame, String townName)
+	public Town(MainFrame mainFrame, Events events)
 	{
+		this.events = events;
 		this.mainFrame = mainFrame;
 		
 		townP = new JPanel();
 		townP.setLayout(null);
 		townP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-		mainFrame.setContentPane(townP);
 		
-		player = Global.player;
-		
-		if (townName.equalsIgnoreCase("town1"))
-		{
-			townName1();
-		}
-		else
-		{
-			JLabel errorL = new JLabel("Invalid town, please report this bug ASAP");
-			errorL.setBounds(100, 10, 500, 100);
-			townP.add(errorL);
-			
-			JButton returnB = new JButton("RETURN");
-			returnB.setBounds(400, 400, 100, 30);
-			returnB.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					mainFrame.remove(townP);
-					new MainGame(mainFrame);
-				}
-			});
-			townP.add(returnB);
-		}
 	}
 	
-	private void townName1()
+	public void setPlayer(Player player)
 	{
-		
+		this.player = player;
+	}
+	
+	public void townName1()
+	{
+		mainFrame.setContentPane(townP);
 		//Create Shop JPanel
 		JPanel shopP = new JPanel();
 		shopP.setLayout(null);
@@ -139,9 +119,7 @@ public class Town
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				mainFrame.remove(townP);
-				Global.player = player;
-				new MainGame(mainFrame);
+				events.mainScreen();
 			}
 		});
 		townP.add(returnB);
