@@ -11,8 +11,7 @@ import adventure.item.Item;
 public class Player extends Character
 {
 	private static final long serialVersionUID = 1L;
-	
-	private int exp;
+
 	private String attackType;
 	private String currentLocation;
 	private ArrayList<Item> inventory = new ArrayList<Item>();
@@ -21,20 +20,14 @@ public class Player extends Character
 	public Player(String n, int ht, String hc, String sc, int h, int s, double dr)
 	{
 		super(n, ht, hc, sc, h, s, dr);
+		super.levelUp(2);
 		inventorySize = 9;
 		currentLocation = "SOUTH";
-		level = 3;
-		exp = 0;
 	}
 	
 	public void setAttckType(String newType)
 	{
 		attackType = newType;
-	}
-	
-	public void gainExp(int expGain)
-	{
-		exp += expGain;
 	}
 	
 	public void addItem(Item newItem)
@@ -50,11 +43,6 @@ public class Player extends Character
 	public String getLocation()
 	{
 		return currentLocation;
-	}
-	
-	public int getExp()
-	{
-		return exp;
 	}
 	
 	public ArrayList<Item> getInventory()

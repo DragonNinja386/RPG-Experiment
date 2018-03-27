@@ -21,7 +21,6 @@ public class Events
 	private Combat combat;
 	private Title title;
 	private MainGame mainGame;
-	private Player player;
 	
 	private MainFrame mainFrame;
 	private JPanel eventsP;
@@ -49,7 +48,7 @@ public class Events
 		combat.setPlayer(player);
 		mainGame.setPlayer(player);
 		town.setPlayer(player);
-		this.player = player;
+		dungeon.setPlayer(player);
 	}
 	
 	//Switches game state to mainGame

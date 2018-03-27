@@ -208,6 +208,10 @@ public class Dungeon
 		
 	}
 
+	public void setPlayer(Player player)
+	{
+		this.player = player;
+	}
 	
 	public void dungeon(int roomNumber)
 	{

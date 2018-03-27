@@ -22,15 +22,14 @@ public class Enemy extends Character
 	private int[] attackChance;
 	private int[] attackRange;
 	private int maxRange;
-	private int exp;
 	private boolean specialName;
 	
 	public Enemy(String n, int ht, String hc, String sc, int h, int s, double dr, int lv)
 	{
 		super(n, ht, hc, sc, h, s, dr);
 		approach = "AGRO";
-		level = lv;
-		exp = 50;
+		super.addExp(50);
+		super.levelUp(2);
 		
 		switch (n.toLowerCase())
 		{
@@ -91,7 +90,7 @@ public class Enemy extends Character
 			break;
 		}
 	}
-	
+
 	public void randomAttack(int range)
 	{
 		//Initialize Random
@@ -109,7 +108,7 @@ public class Enemy extends Character
 				}
 				else
 				{
-					if (health < maxHealth * 0.75)
+					if (super.getHealth() < super.getMaxHealth() * 0.75)
 					{
 						chanceNum += attackChance[i];
 					}
@@ -134,7 +133,7 @@ public class Enemy extends Character
 			}
 			else
 			{
-				if (health < maxHealth * 0.75)
+				if (super.getHealth() < super.getMaxHealth() * 0.75)
 				{
 					for (int c = x; c < attackChance[i] + x; c++)
 					{
@@ -184,11 +183,6 @@ public class Enemy extends Character
 	public int getAttackDamage()
 	{
 		return attackDamage;
-	}
-	
-	public int getExp()
-	{
-		return exp;
 	}
 	
 	public boolean getSpecialName()

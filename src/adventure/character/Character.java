@@ -9,34 +9,37 @@ import java.util.ArrayList;
 import adventure.item.Equipment;
 import adventure.item.Spells;
 
-public class Character implements java.io.Serializable
+public abstract class Character implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
 	//Appearance
-	protected String name;
-	protected int height;
-	protected String hairColor;
-	protected String skinColor;
+	private String name;
+	private int height;
+	private String hairColor;
+	private String skinColor;
 	
 	//Values
-	protected int[] pos;
-	protected int level;
-	protected int health;
-	protected int maxHealth;
-	protected int strength;
-	protected int attack;
-	protected int defense;
-	protected double damageResist;
-	protected int drEffect;
+	private int[] pos;
+	private int level;
+	private int health;
+	private int maxHealth;
+	private int strength;
+	private int attack;
+	private int defense;
+	private double damageResist;
+	private int drEffect;
+	private int exp;
 	
 	//Arrays
-	protected ArrayList<StatusE> effects = new ArrayList<StatusE>();
-	protected ArrayList<Spells> spells = new ArrayList<Spells>();
-	protected Equipment[] equipment = new Equipment[3];
+	private ArrayList<StatusE> effects = new ArrayList<StatusE>();
+	private ArrayList<Spells> spells = new ArrayList<Spells>();
+	private Equipment[] equipment = new Equipment[3];
 
 	public Character(String n, int ht, String hc, String sc, int h, int s, double dr)
 	{
+		level = 1;
+		exp = 0;
 		pos = new int[2];
 		name = n;
 		height = ht;
@@ -46,6 +49,11 @@ public class Character implements java.io.Serializable
 		maxHealth = health;
 		strength = s;
 		damageResist = dr;
+	}
+	
+	public void levelUp(int levels)
+	{
+		level += levels;
 	}
 	
 	public void setPos(int[] newPos)
@@ -113,6 +121,11 @@ public class Character implements java.io.Serializable
 		}
 		
 		return Integer.toString(newAttack);
+	}
+	
+	public void addExp(int num)
+	{
+		exp += num;
 	}
 	
 	public void addHealth()
@@ -198,6 +211,11 @@ public class Character implements java.io.Serializable
 		return health;
 	}
 	
+	public int getExp()
+	{
+		return exp;
+	}
+	
 	public ArrayList<StatusE> getEffects()
 	{
 		return effects;
@@ -212,4 +230,5 @@ public class Character implements java.io.Serializable
 	{
 		return equipment;
 	}
+	
 }

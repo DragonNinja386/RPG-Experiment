@@ -16,9 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import adventure.character.Player;
-import adventure.item.Consumable;
-import adventure.item.Equipment;
-import adventure.item.Spells;
+import adventure.item.*;
 
 public class Title
 {

@@ -2,7 +2,6 @@
  * inventory: polish text?
  */
 
-
 package adventure;
 
 import java.util.ArrayList;
@@ -19,8 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import adventure.character.Player;
-import adventure.item.Equipment;
-import adventure.item.Item;
+import adventure.item.*;
 
 import java.util.ArrayList;
 
