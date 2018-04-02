@@ -27,6 +27,7 @@ public class Events
 	
 	public Events(MainFrame mainFrame)
 	{
+		mainFrame.setVisible(false);
 		dungeon = new Dungeon(mainFrame, this);
 		town = new Town(mainFrame, this);
 		combat = new Combat(mainFrame, this);
@@ -38,7 +39,7 @@ public class Events
 		eventsP = new JPanel();
 		eventsP.setLayout(null);
 		eventsP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-		mainFrame.setContentPane(eventsP);
+		mainFrame.setVisible(true);
 		
 		title.titleScreen();
 	}

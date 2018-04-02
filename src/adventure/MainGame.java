@@ -28,6 +28,7 @@ public class MainGame
 	private Events events;
 	private MainFrame mainFrame;
 	private JPanel mainGameP;
+	private JPanel invP;
 	private Player player;
 	
 	//html
@@ -41,14 +42,11 @@ public class MainGame
 	
 	public MainGame(MainFrame mainFrame, Events events)
 	{
-		this.player = player;
 		this.events = events;
 		this.mainFrame = mainFrame;
 		
-		mainGameP = new JPanel();
-		mainGameP.setLayout(null);
-		mainGameP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-		mainFrame.setContentPane(mainGameP);
+		initMainGame();
+		initInv();
 		
 		mainScreen();
 	}
@@ -58,159 +56,123 @@ public class MainGame
 		this.player = player;
 	}
 	
-	public void mainScreen()
-	{
+	public void mainScreen() {
 		mainFrame.setContentPane(mainGameP);
-		mainGameP.removeAll();
+		
+	}
+	
+	private void initMainGame()
+	{
+		mainGameP = new JPanel();
+		mainGameP.setLayout(null);
+		mainGameP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+		mainFrame.setContentPane(mainGameP);
 		
 		JLabel inDevelopmentL = new JLabel("This is what the main game screen would look like, but i'm to lazy to fully design it right now.");
 		inDevelopmentL.setBounds(10, 10, 500, 100);
 		mainGameP.add(inDevelopmentL);
 		
-		JButton exploreB = new JButton("EXPLORE");
-		exploreB.setBounds(10, 400, 100, 30);
-		exploreB.addActionListener(new ActionListener()
-			{
+
+		JButton[] buttons = new JButton[4];
+		
+		buttons[0] = new JButton("EXPLORE");
+		buttons[0].addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					explore();
 				}
 			});
-		mainGameP.add(exploreB);
-		
-		JButton inventoryB = new JButton("INVENTORY");
-		inventoryB.setBounds(120, 400, 100, 30);
-		inventoryB.addActionListener(new ActionListener()
-			{
+		buttons[1] = new JButton("INVENTORY");
+		buttons[1].addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					inventoryScreen();
+				public void actionPerformed(ActionEvent arg0) {
+					openInv();
 				}
 			});
-		mainGameP.add(inventoryB);
-		
-		JButton saveB = new JButton("SAVE GAME");
-		saveB.setBounds(230, 400, 100, 30);
-		saveB.addActionListener(new ActionListener()
-			{
+		buttons[2] = new JButton("SAVE GAME");
+		buttons[2].addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					saveGame();
 				}
 			});
-		mainGameP.add(saveB);
-		
-		JButton statusB = new JButton("STATUS");
-		statusB.setBounds(340, 400, 100, 30);
-		statusB.addActionListener(new ActionListener()
-			{
+		buttons[3] = new JButton("STATUS");
+		buttons[3].addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					statusScreen();
 				}
 			});
-		mainGameP.add(statusB);
-		
-		mainGameP.repaint();
-		mainGameP.revalidate();
+		mainFrame.buttons(buttons);
 	}
 	
-	private void inventoryScreen()
-	{
-		mainGameP.removeAll();
+	private void initInv() {
+		invP = new JPanel();
+		invP.setLayout(null);
+		invP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+		mainFrame.setContentPane(invP);
+	}
+	
+	private void openInv() {
+		invP.removeAll();
+		mainFrame.setContentPane(invP);
+		
 		pageNumber = 1;
 		
 		JLabel currentL = new JLabel();
 		currentL.setText("This is your inventory");
 		currentL.setBounds(300, 10, 300, 30);
-		mainGameP.add(currentL);
+		invP.add(currentL);
 		
 		JLabel text1 = new JLabel();
 		text1.setBounds(10, 10, 400, 30);
-		mainGameP.add(text1);
+		invP.add(text1);
 		
 		JLabel text2 = new JLabel();
 		text2.setBounds(10, 60, 400, 300);
-		mainGameP.add(text2);
+		invP.add(text2);
 		
 		invButtons = new ArrayList<JButton>();
-		for (i = 0, a = 0; i < player.getInventory().size(); i++, a++)
-		{
+		for (i = 0, a = 0; i < player.getInventory().size(); i++, a++) {
 			invButtons.add(new JButton(player.getInventory().get(i).getName()));
+			invButtons.get(i).setName(Integer.toString(i));
 			if (a == 4)
-			{
 				a = 0;
-			}
-			if (i < 4)
-			{
-				invButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-				mainGameP.add(invButtons.get(i));
-			}
-			else if (i < 8)
-			{
-				invButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-				mainGameP.add(invButtons.get(i));
-			}
-			else if (i % 8 < 4)
-			{
-				invButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-			}
-			else
-			{
-				invButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-			}
-			MouseMotionListener invMouse = new MouseMotionListener()
-			{
+			MouseMotionListener invMouse = new MouseMotionListener() {
 				Item item = player.getInventory().get(i);
 				@Override
-				public void mouseMoved(MouseEvent e)
-				{
+				public void mouseMoved(MouseEvent e) {
 					text1.setText(item.getName());
 					text2.setText(html1 + 200 + html2 + item.getDesc());
 				}
 
 				@Override
-				public void mouseDragged(MouseEvent e)
-				{
+				public void mouseDragged(MouseEvent e) {
 					
 				}
 			};
-			invButtons.get(i).addActionListener(new ActionListener()
-			{
+			invButtons.get(i).addActionListener(new ActionListener() {
 				int index = i;
 				Equipment equip;
 				Equipment tempEquip = null;
 				
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					if (player.getInventory().get(index) instanceof Equipment)
-					{
+				public void actionPerformed(ActionEvent e) {
+					if (player.getInventory().get(index) instanceof Equipment) {
 						//Grabs Equipment from inventory index
 						equip = (Equipment)player.getInventory().get(index);
 						
 						//Checks for current equipment type
 						if (equip.getType().equals("HELMET") && player.getEquip()[0] != null)
-						{
 							tempEquip = player.getEquip()[0];
-						}
 						else if (equip.getType().equalsIgnoreCase("chest") && player.getEquip()[1] != null)
-						{
 							tempEquip = player.getEquip()[1];
-						}
 						else if (equip.getType().equalsIgnoreCase("weapon") && player.getEquip()[2] != null)
-						{
 							tempEquip = player.getEquip()[2];
-						}
 						
 						//Equips equipment and takes off current one
 						player.addEquipment(equip);
-						if (tempEquip != null)
-						{
+						if (tempEquip != null) {
 							player.getInventory().add(index, tempEquip);
 							player.getInventory().remove(index + 1);
 							equip = tempEquip;
@@ -218,124 +180,68 @@ public class MainGame
 							text2.setText(tempEquip.getDesc());
 							invButtons.get(index).setText(tempEquip.getName());
 							invButtons.get(index).removeMouseMotionListener(invMouse);
-							MouseMotionListener invMouse = new MouseMotionListener()
-							{
+							MouseMotionListener invMouse = new MouseMotionListener() {
 								Equipment equipTemp = tempEquip;
 								@Override
-								public void mouseMoved(MouseEvent e)
-								{
+								public void mouseMoved(MouseEvent e) {
 									text1.setText(equipTemp.getName());
 									text2.setText(html1 + 200 + html2 + equipTemp.getDesc());
 								}
 								@Override
-								public void mouseDragged(MouseEvent e)
-								{
+								public void mouseDragged(MouseEvent e) {
 									
 								}
 							};
 							invButtons.get(index).addMouseMotionListener(invMouse);
-							mainGameP.repaint();
-							mainGameP.revalidate();
+							invP.repaint();
+							invP.revalidate();
 						}
-						else
-						{
+						else {
 							player.getInventory().remove(index);
-							mainGameP.remove(invButtons.get(index));
+							invP.remove(invButtons.get(index));
 						}
-						mainGameP.repaint();
-						mainGameP.revalidate();
+						invP.repaint();
+						invP.revalidate();
 					}
-					else if (player.getInventory().get(index).getClass() == Item.class)
-					{
+					else if (player.getInventory().get(index).getClass() == Item.class) {
 						
 					}
-					else
-					{
+					else {
 						System.out.println("Item error 404, item class doesn't exist");
+						System.out.println(((JButton)e.getSource()).getName());
 					}
 				}
 			});
 			invButtons.get(i).addMouseMotionListener(invMouse);
 		}
+		mainFrame.buttons(invButtons);
 		
-		JButton nextB = new JButton("NEXT");
-		nextB.setBounds(450, 360, 100, 30);
-		nextB.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if (pageNumber == ((invButtons.size() - 1) / 8) + 1)
-				{
-					for (int i = 0; i < invButtons.size(); i++)
-					{
-						if (i < 8)
-						{
-							mainGameP.add(invButtons.get(i));
-						}
-						else
-						{
-							mainGameP.remove(invButtons.get(i));
-						}
-					}
-					pageNumber = 1;
-				}
-				else
-				{
-					for (int i = 0; i < invButtons.size(); i++)
-					{
-						if (i >= 8 * pageNumber && i <= (pageNumber + 1) * 8)
-						{
-							mainGameP.add(invButtons.get(i));
-						}
-						else
-						{
-							mainGameP.remove(invButtons.get(i));
-						}
-					}
-					pageNumber++;
-				}
-				mainGameP.repaint();
-				mainGameP.revalidate();
-			}
-		});
-		if (invButtons.size() > 8)
-		{
-			mainGameP.add(nextB);
-		}
-		
-		MouseMotionListener mouseOver = new MouseMotionListener()
-		{
+		MouseMotionListener mouseOver = new MouseMotionListener() {
 			@Override
-			public void mouseMoved(MouseEvent e)
-			{
+			public void mouseMoved(MouseEvent e) {
 				text1.setText("");
 				text2.setText("");
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e)
-			{
+			public void mouseDragged(MouseEvent e) {
 				
 			}
 		};
 		
-		JButton continueB = new JButton("BACK");
-		continueB.setBounds(450, 400, 100, 30);
-		continueB.addActionListener(new ActionListener()
-		{
+		JButton backB = new JButton("BACK");
+		backB.setBounds(450, 400, 100, 30);
+		backB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				mainGameP.removeMouseMotionListener(mouseOver);
+			public void actionPerformed(ActionEvent e) {
+				invP.removeMouseMotionListener(mouseOver);
 				mainScreen();
 			}
 		});
-		mainGameP.add(continueB);
+		invP.add(backB);
 		
-		mainGameP.addMouseMotionListener(mouseOver);
+		invP.addMouseMotionListener(mouseOver);
 		
-		mainGameP.repaint();
-		mainGameP.revalidate();
 	}
 	
 	private void explore()

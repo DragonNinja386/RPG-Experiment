@@ -30,14 +30,12 @@ public class Title
 	private JPanel titleP;
 	
 	//Loads Content
-	private void loadImages()
-	{
+	private void loadImages() {
 
 	}
 	
 	//Game starts here
-	public Title(MainFrame mainFrame, Events events)
-	{
+	public Title(MainFrame mainFrame, Events events) {
 		loadImages();
 		
 		this.events = events;
@@ -49,8 +47,7 @@ public class Title
 		mainFrame.setContentPane(titleP);
 	}
 
-	public void titleScreen()
-	{
+	public void titleScreen() {
 		mainFrame.setContentPane(titleP);
 		
 		JLabel titleL = new JLabel("ADVENTURE");
@@ -59,24 +56,20 @@ public class Title
 		
 		JButton storyB = new JButton("New Game");
 		storyB.setBounds(400, 400, 100, 30);
-		storyB.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				mainFrame.remove(titleP);
-				createCharacter();
-			}
-		});
+		storyB.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mainFrame.remove(titleP);
+					createCharacter();
+				}
+			});
 		titleP.add(storyB);
 		
 		JButton loadB = new JButton("Continue");
 		loadB.setBounds(200,400,100,30);
-		loadB.addActionListener(new ActionListener()
-		{
+		loadB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				loadGame();
 			}
 		});
@@ -86,11 +79,9 @@ public class Title
 		titleP.revalidate();
 	}
 	
-	private void createCharacter()
-	{
+	private void createCharacter() {
 		JPanel[] creationP = new JPanel[6];
-		for (int i = 0; i < creationP.length; i++)
-		{
+		for (int i = 0; i < creationP.length; i++) {
 			creationP[i] = new JPanel();
 			creationP[i].setLayout(null);
 			creationP[i].setSize(mainFrame.getWidth(), mainFrame.getHeight());
@@ -109,25 +100,20 @@ public class Title
 		creationP[0].add(errorL);
 		JButton nameB = new JButton("CONFIRM");
 		nameB.setBounds(nameT.getX() + 160, nameT.getY(), 80, 30);
-		nameB.addActionListener(new ActionListener()
-		{
+		nameB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				if (nameT.getText().equalsIgnoreCase(""))
-				{
+			public void actionPerformed(ActionEvent e) {
+				if (nameT.getText().equalsIgnoreCase("")) {
 					errorL.setText("Name cannot be blank");
 					creationP[0].repaint();
 					creationP[0].revalidate();
 				}
-				else if (nameT.getText().length() > 15)
-				{
+				else if (nameT.getText().length() > 15) {
 					errorL.setText("Name cannot be more than 15 characters");
 					creationP[0].repaint();
 					creationP[0].revalidate();
 				}
-				else
-				{
+				else {
 					((JButton)e.getSource()).setName(nameT.getText());
 					mainFrame.setContentPane(creationP[1]);
 				}
@@ -153,14 +139,11 @@ public class Title
 		pathB[3] = new JButton("PRESERVER");
 		pathB[3].setBounds(300, 250, 180, 30);
 		pathB[3].setToolTipText("You lived life preserving all forms of written information, and even discovered a few spells in the process");
-		for (JButton jb : pathB)
-		{
+		for (JButton jb : pathB) {
 			jb.setName(null);
-			jb.addActionListener(new ActionListener()
-			{
+			jb.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					((JButton)e.getSource()).setName(((JButton)e.getSource()).getText());
 					mainFrame.setContentPane(creationP[2]);
 				}
@@ -178,14 +161,11 @@ public class Title
 		genderB[0].setBounds(50, 200, 100, 30);
 		genderB[1] = new JButton("Female");
 		genderB[1].setBounds(170, 200, 100, 30);
-		for (JButton jb : genderB)
-		{
+		for (JButton jb : genderB) {
 			jb.setName(null);
-			jb.addActionListener(new ActionListener()
-			{
+			jb.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					((JButton)e.getSource()).setName(((JButton)e.getSource()).getText());
 					mainFrame.setContentPane(creationP[3]);
 				}
@@ -207,14 +187,11 @@ public class Title
 		hairB[2].setBounds(290, 200, 100, 30);
 		hairB[3] = new JButton("Brown");
 		hairB[3].setBounds(410, 200, 100, 30);
-		for (JButton jb : hairB)
-		{
+		for (JButton jb : hairB) {
 			jb.setName(null);
-			jb.addActionListener(new ActionListener()
-			{
+			jb.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					((JButton)e.getSource()).setName(((JButton)e.getSource()).getText());
 					mainFrame.setContentPane(creationP[4]);
 				}
@@ -236,14 +213,11 @@ public class Title
 		skinB[2].setBounds(290, 200, 100, 30);
 		skinB[3] = new JButton("Dark");
 		skinB[3].setBounds(410, 200, 100, 30);
-		for (JButton jb : skinB)
-		{
+		for (JButton jb : skinB) {
 			jb.setName(null);
-			jb.addActionListener(new ActionListener()
-			{
+			jb.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					((JButton)e.getSource()).setName(((JButton)e.getSource()).getText());
 					creationP[5].add(errorL);
 					mainFrame.setContentPane(creationP[5]);
@@ -261,39 +235,32 @@ public class Title
 		creationP[5].add(heightT);
 		JButton heightB = new JButton("CONFIRM");
 		heightB.setBounds(heightT.getX() + 160, heightT.getY(), 80, 30);
-		heightB.addActionListener(new ActionListener()
-		{
+		heightB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				boolean isDigit = true;
 				for (Character c : heightT.getText().toCharArray())
-					if (!Character.isDigit(c))
-					{
+					if (!Character.isDigit(c)) {
 						isDigit = false;
 						break;
 					}
 					
-				if (heightT.getText().equalsIgnoreCase("") || !isDigit)
-				{
+				if (heightT.getText().equalsIgnoreCase("") || !isDigit) {
 					errorL.setText("Invalid input");
 					creationP[5].repaint();
 					creationP[5].revalidate();
 				}
-				else if (Integer.parseInt(heightT.getText()) < 48)
-				{
+				else if (Integer.parseInt(heightT.getText()) < 48) {
 					errorL.setText("height cannot be less then 4 feet (48 inches)");
 					creationP[5].repaint();
 					creationP[5].revalidate();
 				}
-				else if (Integer.parseInt(heightT.getText()) > 72)
-				{
+				else if (Integer.parseInt(heightT.getText()) > 72) {
 					errorL.setText("height cannot be more then 7 feet (72 inches)");
 					creationP[5].repaint();
 					creationP[5].revalidate();
 				}
-				else
-				{
+				else {
 					((JButton)e.getSource()).setName(heightT.getText());
 					
 					String name = nameB.getName();
@@ -323,8 +290,7 @@ public class Title
 		
 	}
 	
-	private void confirm(String name, String bgHistory, String gender, int height, String skinColor, String hairColor)
-	{
+	private void confirm(String name, String bgHistory, String gender, int height, String skinColor, String hairColor) {
 		JPanel creationP = new JPanel();
 		creationP.setLayout(null);
 		creationP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
@@ -361,29 +327,19 @@ public class Title
 		noB.setBounds(400, 300, 80, 30);
 		creationP.add(noB);
 		
-		yesB.addActionListener(new ActionListener()
-		{
+		yesB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				Player newPlayer = new Player(name, height, hairColor, skinColor, 0, 0, 1);
 				
 				if (bgHistory.equalsIgnoreCase("adventurous"))
-				{
 					newPlayer = new Player(name, height, hairColor, skinColor, 20, 10, 1);
-				}
 				else if (bgHistory.equalsIgnoreCase("reserved"))
-				{
 					newPlayer = new Player(name, height, hairColor, skinColor, 16, 13, 1);
-				}
 				else if (bgHistory.equalsIgnoreCase("guardian"))
-				{
 					newPlayer = new Player(name, height, hairColor, skinColor, 25, 8, 1);
-				}
 				else if (bgHistory.equalsIgnoreCase("preserver"))
-				{
 					newPlayer = new Player(name, height, hairColor, skinColor, 18, 8, 1);
-				}
 				
 				newPlayer.getSpells().add(new Spells("Fireball"));
 				newPlayer.getSpells().add(new Spells("Holy Hands"));
@@ -391,8 +347,7 @@ public class Title
 				newPlayer.addEquipment(new Equipment("Giant's Helmet", "A helemt made into the shape of a h0rn, made out of the h0rns of giants which are conviently also in the shape of a h0rn", "HELMET", 2));
 				newPlayer.addEquipment(new Equipment("Maiden's Armor", /*"Regardless of whether you are male or female, you have to start with this disgraceful piece of armor, that only protects your \"chest\" (regardless if you have one or not)"*/ "to be implemented", "CHEST", 4));
 				newPlayer.addEquipment(new Equipment("Sword Bow", "A sword in the shape of a bow. Surprisingly it can be used \"effectively\".", "WEAPON", 3));
-				for (int i = 0; i < 4; i++)
-				{
+				for (int i = 0; i < 4; i++) {
 					newPlayer.addItem(new Consumable("Health Potion", "A strange red substance flows within the bottle", "HEAL", 12));
 				}
 				
@@ -400,11 +355,9 @@ public class Title
 				events.mainScreen();
 			}
 		});
-		noB.addActionListener(new ActionListener()
-		{
+		noB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				createCharacter();
 			}
 		});
@@ -413,24 +366,23 @@ public class Title
 		mainFrame.revalidate();
 	}
 	
-	private void loadGame()
-	{
+	private void loadGame() {
 		FileDialog dialog = new FileDialog(mainFrame, "Select a file");
 	    dialog.setMode(FileDialog.LOAD);
 	    dialog.setVisible(true);
 	    String file = dialog.getFile();
 	    System.out.println(file + " chosen.");
 	    
-	    if (file != null)
-	    {
-		    try
-			{
+	    if (file != null) {
+		    try {
 				FileInputStream saveFile = new FileInputStream(file);
 				ObjectInputStream save = new ObjectInputStream(saveFile);
 				
 				Player newPlayer = null;
 				newPlayer = (Player) save.readObject();
-				
+				for (int i = 0; i < 21; i++) { //TODO remove this when finished with debugging
+					newPlayer.addItem(new Consumable("Health Potion", "A strange red substance flows within the bottle", "HEAL", 12));
+				}
 				events.setPlayer(newPlayer);
 	
 				saveFile.close();
@@ -438,13 +390,11 @@ public class Title
 				
 				events.mainScreen();
 			}
-			catch(Exception exc)
-			{
+			catch(Exception exc) {
 				exc.printStackTrace();
 			}
 	    }
-	    else
-	    {
+	    else {
 	    	JLabel errorL = new JLabel("Save not found");
 	    	errorL.setBounds(200, 200, 100, 30);
 	    	titleP.add(errorL);

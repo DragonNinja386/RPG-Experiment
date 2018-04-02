@@ -49,7 +49,6 @@ public class Combat
     private int width = 0;
     private Random random = new Random();
     
-    
 	//html
     private String html1 = "<html><body style='width: ";
     private String html2 = "px'>";
@@ -70,6 +69,9 @@ public class Combat
         
         //instantiatePanels();
     }
+    
+    //Gives Combat access to the player object
+    public void setPlayer(Player player) { this.player = player; }
     
     private void instantiatePanels()
     {
@@ -363,9 +365,7 @@ public class Combat
 
 		
     }
-    
-    //Gives Combat access to the player object
-    public void setPlayer(Player player) { this.player = player; }
+
     
     //Starts Combat between player and enemies
     public void initiateCombat(Enemy[] enemy, int w, int h, int obstacleNum) {
