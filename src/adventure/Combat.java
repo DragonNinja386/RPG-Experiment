@@ -29,6 +29,10 @@ public class Combat
 	//Swing variables
 	private Events events;
 	private MainFrame mainFrame;
+	private JPanel combatP;
+	private JPanel statusP;
+	private JPanel spellP;
+	private JPanel inventoryP;
 	private String location;
 	
 	//Combat variables
@@ -64,110 +68,130 @@ public class Combat
         //Initialize variables
     	this.events = events;
         this.mainFrame = mainFrame;
-
         
-        
-        //instantiatePanels();
+    	combatP = new JPanel();
+        combatP.setLayout(null);
+        combatP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+    	statusP = new JPanel();
+    	statusP.setLayout(null);
+    	statusP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+    	spellP = new JPanel();
+    	spellP.setLayout(null);
+    	spellP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+    	inventoryP = new JPanel();
+    	inventoryP.setLayout(null);
+    	inventoryP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
     }
     
     //Gives Combat access to the player object
-    public void setPlayer(Player player) { this.player = player; }
+    public void setPlayer(Player player) {
+    	this.player = player;
+    }
+
+    //Starts Combat between player and enemies
+    public void initiateCombat(Enemy[] enemy, int w, int h, int obstacleNum) {
+    	//Initialize variables
+    	this.enemy = new Enemy[]{new Enemy("The Great Wall of America", 10, "Grey", "Grey", 70, 1, 1, 1), new Enemy("The Great Wall of America", 10, "Grey", "Grey", 75, 3, 2, 3)};
+        width = w;
+        height = h;
+        gridButton = new Grid[width][height];
+        winner = false;
+        
+    	//Initialize Grid
+        //Enemy Space
+        for (int i = 0, x = 0, y = 0; i < this.enemy.length; i++) {
+            do {
+                x = random.nextInt(width / 4) + 1;
+                y = random.nextInt(height / 2) + height / 4;
+            } while (gridButton[x][y] != null);
+            gridButton[x][y] = new Grid("E");
+            gridButton[x][y].setNum(i);
+            gridButton[x][y].setEnemy(this.enemy[i]);
+        }
+        //Player Space
+        gridButton[random.nextInt(width / 4) + (width * 3 / 4) - 1][random.nextInt(height / 2) + height / 4] = new Grid("O");
+        //Empty Space
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++) {
+                if (gridButton[x][y] == null)
+                    gridButton[x][y] = new Grid(" ");
+                gridButton[x][y].assign(x, y);
+            }
+
+        spellP.setVisible(false);
+        statusP.setVisible(false);
+        spellSetup();
+        statusSetup();
+        mainFrame.setContentPane(combatP);
+        statusP.setVisible(true);
+        spellP.setVisible(true);
+        playerAction();
+    }
     
-    private void instantiatePanels()
-    {
-    	JPanel combatP = new JPanel();
-        combatP.setLayout(null);
-        combatP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-    	JPanel statusP = new JPanel();
-    	statusP.setLayout(null);
-    	statusP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-    	JPanel spellP = new JPanel();
-    	JPanel inventoryP = new JPanel();
-    	
-		/*
-		 *  Main Combat Panel
-		 */
-    	//Displays Player Information
-		JLabel nameL = new JLabel(player.getName());
-		nameL.setBounds(10, 140, 200, 30);
-		combatP.add(nameL);
-
-		JLabel playerLevelL = new JLabel("Level: " + Integer.toString(player.getLevel()));
-		playerLevelL.setBounds(10, 165, 200, 30);
-		combatP.add(playerLevelL);
-
-		JLabel healthL = new JLabel("Health: " + Integer.toString(player.getHealth()) + "/" + Integer.toString(player.getMaxHealth()));
-		healthL.setBounds(10, 190, 100, 30);
-		combatP.add(healthL);
-
-		//Buttons/Commands
-		JButton attackB = new JButton("ATTACK");
-		attackB.setBounds(10, 400, 100, 30);
-		attackB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.setAttckType("ATTACK");
-				targets = 2;
-				setTarget(2, new String[] {"E"});
-			}
-		});
-		combatP.add(attackB);
+    
+    private void spellSetup() {
+		mainFrame.setContentPane(spellP);
 		
-		JButton moveB = new JButton("MOVE");
-		moveB.setBounds(10, 440, 100, 30);
-		moveB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				player.setAttckType("MOVE");
-				targets = 2;
-				int playerX = 0, playerY = 0;
-		        for (int x = 0; x < width; x++)
-		            for (int y = 0; y < height; y++) {
-		                gridButton[x][y].setBounds(x * 30 + 10, y * 30 + 10, 30, 30);
-		                if (gridButton[x][y].getSymbol().equals("O")) {
-		                    playerX = x;
-		                    playerY = y;
-		                    break;
-		                }
-		            }
-				setMovement(2, playerX, playerY);
-			}
-		});
-		combatP.add(moveB);
+		JLabel spellNameL = new JLabel();
+		spellNameL.setBounds(10, 10, 400, 30);
+		spellP.add(spellNameL);
 
-		JButton spellB = new JButton("SPELL");
-		spellB.setBounds(120, 400, 100, 30);
-		spellB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				spellSelection();
-			}
-		});
-		combatP.add(spellB);
+		JLabel SpellDescL = new JLabel();
+		SpellDescL.setBounds(10, 60, 400, 300);
+		spellP.add(SpellDescL);
 
-		JButton inventoryB = new JButton("INVENTORY");
-		inventoryB.setBounds(230, 400, 100, 30);
-		inventoryB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				inventoryScreen();
-			}
-		});
-		combatP.add(inventoryB);
+		ArrayList<JButton> spellButtons = new ArrayList<JButton>();
+		for (int i = 0; i < player.getSpells().size(); i++) {
+			spellButtons.get(i).setName(Integer.toString(i));
+			spellButtons.get(i).addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//TODO fix spells
+					playerSpell = player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName()));
+					player.setAttckType("SPELL");
+					//outcome();
+				}
+			});
+			spellButtons.get(i).addMouseMotionListener(new MouseMotionListener() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					spellNameL.setText(player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName())).getName());
+					SpellDescL.setText(html1 + "200" + html2 + player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName())).getDesc());
+				}
 
-		JButton statusB = new JButton("STATUS");
-		statusB.setBounds(340, 400, 100, 30);
-		statusB.addActionListener(new ActionListener() {
+				@Override
+				public void mouseDragged(MouseEvent e) {
+
+				}
+			});
+		}
+
+		spellP.addMouseMotionListener(new MouseMotionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				mainFrame.setContentPane(statusP);
+			public void mouseMoved(MouseEvent e) {
+				spellNameL.setText("");
+				SpellDescL.setText("");
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+
 			}
 		});
-		combatP.add(statusB);
-    	
-		/*
-		 *  Status Panel
-		 */
+
+		JButton spellBackB = new JButton("BACK");
+		spellBackB.setBounds(450, 400, 100, 30);
+		spellBackB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setContentPane(combatP);
+			}
+		});
+		spellP.add(spellBackB);
+    }
+    
+    
+    private void statusSetup() {
     	JLabel currentL = new JLabel();
 		currentL.setText("This is your equipment");
 		currentL.setBounds(300, 10, 300, 30);
@@ -244,7 +268,7 @@ public class Combat
 
 		//Create back to mainScreen button
 		JButton continueB = new JButton("BACK");
-		continueB.setBounds(450, 400, 100, 30);
+		continueB.setBounds(mainFrame.backButtonLoc());
 		continueB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -252,311 +276,99 @@ public class Combat
 			}
 		});
 		statusP.add(continueB);
-		
-		/*
-		 *  Spell Panel
-		 */
-		JLabel spellNameL = new JLabel();
-		spellNameL.setBounds(10, 10, 400, 30);
-		spellP.add(spellNameL);
 
-		JLabel SpellDescL = new JLabel();
-		SpellDescL.setBounds(10, 60, 400, 300);
-		spellP.add(SpellDescL);
-
-		ArrayList<JButton> spellButtons = new ArrayList<JButton>();
-		for (int i = 0, a = 0; i < player.getSpells().size(); i++, a++) {
-			spellButtons.add(new JButton(player.getSpells().get(i).getName()));
-			spellButtons.get(i).setName(Integer.toString(a));
-			if (a == 4)
-				a = 0;
-			if (i < 4) {
-				spellButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-				spellP.add(spellButtons.get(i));
-			}
-			else if (i < 8) {
-				spellButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-				spellP.add(spellButtons.get(i));
-			}
-			else if (i % 8 < 4) {
-				spellButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-			}
-			else {
-				spellButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-			}
-			int index = i;
-			spellButtons.get(i).addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					//TODO fix spells
-					playerSpell = player.getSpells().get(index);
-					player.setAttckType("SPELL");
-					//outcome();
-				}
-			});
-			spellButtons.get(i).addMouseMotionListener(new MouseMotionListener() {
-				@Override
-				public void mouseMoved(MouseEvent e) {
-					spellNameL.setText(player.getSpells().get(index).getName());
-					SpellDescL.setText(html1 + "200" + html2 + player.getSpells().get(index).getDesc());
-				}
-
-				@Override
-				public void mouseDragged(MouseEvent e) {
-
-				}
-			});
-		}
-
-		JButton nextB = new JButton("NEXT");
-		nextB.setBounds(450, 360, 100, 30);
-		nextB.setName("0");
-		nextB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//TODO fix this, this needs fixed real bad. Fix it.
-				int page = Integer.parseInt(((JButton)e.getSource()).getName());
-				if (page == ((player.getSpells().size() - 1) / 8) + 1) {
-					for (int i = 0; i < player.getSpells().size(); i++)
-						if (i < 8)
-							spellP.add(spellButtons.get(i));
-						else
-							spellP.remove(spellButtons.get(i));
-					((JButton)e.getSource()).setName("0");
-				}
-				else {
-					for (int i = 0; i < player.getSpells().size(); i++)
-						if (i >= 8 * page && i <= (page + 1) * 8)
-							spellP.add(spellButtons.get(i));
-						else
-							spellP.remove(spellButtons.get(i));
-					((JButton)e.getSource()).setName(Integer.toString(page+1));
-				}
-				spellP.repaint();
-				spellP.revalidate();
-			}
-		});
-		if (player.getSpells().size() > 8) {
-			spellP.add(nextB);
-		}
-
-		spellP.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				spellNameL.setText("");
-				SpellDescL.setText("");
-			}
-
-			@Override
-			public void mouseDragged(MouseEvent e) {
-
-			}
-		});
-
-		JButton spellBackB = new JButton("BACK");
-		spellBackB.setBounds(450, 400, 100, 30);
-		spellBackB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mainFrame.setContentPane(combatP);
-			}
-		});
-		spellP.add(spellBackB);
-
-		
-    }
-
-    
-    //Starts Combat between player and enemies
-    public void initiateCombat(Enemy[] enemy, int w, int h, int obstacleNum) {
-    	//Initialize variables
-    	this.enemy = new Enemy[]{new Enemy("The Great Wall of America", 10, "Grey", "Grey", 70, 1, 1, 1), new Enemy("The Great Wall of America", 10, "Grey", "Grey", 75, 3, 2, 3)};
-        width = w;
-        height = h;
-        gridButton = new Grid[width][height];
-        winner = false;
-        
-    	//Initialize Grid
-        //Enemy Space
-        for (int i = 0, x = 0, y = 0; i < this.enemy.length; i++) {
-            do {
-                x = random.nextInt(width / 4) + 1;
-                y = random.nextInt(height / 2) + height / 4;
-            } while (gridButton[x][y] != null);
-            gridButton[x][y] = new Grid("E");
-            gridButton[x][y].setNum(i);
-            gridButton[x][y].setEnemy(this.enemy[i]);
-        }
-        //Player Space
-        gridButton[random.nextInt(width / 4) + (width * 3 / 4) - 1][random.nextInt(height / 2) + height / 4] = new Grid("O");
-        //Empty Space
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++) {
-                if (gridButton[x][y] == null)
-                    gridButton[x][y] = new Grid(" ");
-                gridButton[x][y].assign(x, y);
-            }
-
-        loadImages();
-        playerAction();
     }
     
-    //Loads images to use
-    private void loadImages() {
+    private void openInventory() {
     	
-        //System.out.println("Loading images");
-        //System.out.println("Loading Complete");
     }
     
     
     //Player makes combat choice
 	private void playerAction() {
-		
+		combatP.removeAll();
+		mainFrame.setContentPane(combatP);
 		
 		//Grid
 		resetGrid();
 
+    	//Displays Player Information
+		JLabel nameL = new JLabel(player.getName());
+		nameL.setBounds(10, 140, 200, 30);
+		combatP.add(nameL);
+
+		JLabel playerLevelL = new JLabel("Level: " + Integer.toString(player.getLevel()));
+		playerLevelL.setBounds(10, 165, 200, 30);
+		combatP.add(playerLevelL);
+
+		JLabel healthL = new JLabel("Health: " + Integer.toString(player.getHealth()) + "/" + Integer.toString(player.getMaxHealth()));
+		healthL.setBounds(10, 190, 100, 30);
+		combatP.add(healthL);
+
+		//Buttons/Commands
+		JButton[] combatB = new JButton[5];
 		
-
-        
-	}
-
-
-	//Opens "spell book"
-	private void spellSelection() {
+		combatB[0] = new JButton("ATTACK");
+		combatB[0].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setAttckType("ATTACK");
+				targets = 2;
+				setTarget(2, new String[] {"E"});
+			}
+		});
 		
+		combatB[1] = new JButton("MOVE");
+		combatB[1].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.setAttckType("MOVE");
+				targets = 2;
+				int playerX = 0, playerY = 0;
+		        for (int x = 0; x < width; x++)
+		            for (int y = 0; y < height; y++) {
+		                gridButton[x][y].setBounds(x * 30 + 10, y * 30 + 10, 30, 30);
+		                if (gridButton[x][y].getSymbol().equals("O")) {
+		                    playerX = x;
+		                    playerY = y;
+		                    break;
+		                }
+		            }
+				setMovement(2, playerX, playerY);
+			}
+		});
+
+		combatB[2] = new JButton("SPELL");
+		combatB[2].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setContentPane(spellP);
+			}
+		});
+
+		combatB[3] = new JButton("INVENTORY");
+		combatB[3].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openInventory();
+			}
+		});
+
+		combatB[4] = new JButton("STATUS");
+		combatB[4].addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setContentPane(statusP);
+			}
+		});
+		
+		mainFrame.buttons(combatB);
 		
 	}
 	
-	//Opens inventory
-	private void inventoryScreen() {
-		
-		JPanel inventoryP = new JPanel();
-		inventoryP.setLayout(null);
-		inventoryP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 
-		JLabel currentL = new JLabel();
-		currentL.setText("This is your inventory");
-		currentL.setBounds(300, 10, 300, 30);
-		inventoryP.add(currentL);
-
-		JLabel text1 = new JLabel();
-		text1.setBounds(10, 10, 400, 30);
-		inventoryP.add(text1);
-
-		JLabel text2 = new JLabel();
-		text2.setBounds(10, 60, 400, 300);
-		inventoryP.add(text2);
-
-		ArrayList<JButton> invButtons = new ArrayList<JButton>();
-		for (int i = 0, a = 0; i < player.getInventory().size(); i++, a++) {
-			invButtons.add(new JButton(player.getInventory().get(i).getName()));
-			if (a == 4)
-				a = 0;
-			if (i < 4) {
-				invButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-				inventoryP.add(invButtons.get(i));
-			}
-			else if (i < 8) {
-				invButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-				inventoryP.add(invButtons.get(i));
-			}
-			else if (i % 8 < 4)
-				invButtons.get(i).setBounds((110 * a) + 10,360,100,30);
-			else
-				invButtons.get(i).setBounds((110 * a) + 10,400,100,30);
-			int index = i;
-			invButtons.get(i).addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if(player.getInventory().get(index) instanceof Consumable) {
-						//TODO fix inventory
-						consume = (Consumable) player.getInventory().get(index);
-						player.getInventory().remove(index);
-						System.out.println("item " + index + "has been removed");
-						player.setAttckType("ITEM");
-						itemType = "CONSUMABLE";
-						//outcome();
-					}
-
-				}
-			});
-			invButtons.get(i).addMouseMotionListener(new MouseMotionListener() {
-				@Override
-				public void mouseMoved(MouseEvent e) {
-					Item item = player.getInventory().get(index);
-					text1.setText(item.getName());
-					text2.setText(item.getDesc() + index);
-				}
-
-				@Override
-				public void mouseDragged(MouseEvent e) {
-
-				}
-			});
-		}
-
-		JButton nextB = new JButton("NEXT");
-		nextB.setBounds(450, 360, 100, 30);
-		nextB.setName("0");
-		nextB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//TODO fix this, this needs fixed real bad. Fix it.
-				int page = Integer.parseInt(((JButton)e.getSource()).getName());
-				if (page == ((player.getInventory().size() - 1) / 8) + 1) {
-					for (int i = 0; i < player.getInventory().size(); i++)
-						if (i < 8)
-							inventoryP.add(invButtons.get(i));
-						else
-							inventoryP.remove(invButtons.get(i));
-					((JButton)e.getSource()).setName("0");
-				}
-				else {
-					for (int i = 0; i < player.getInventory().size(); i++)
-						if (i >= 8 * page && i <= (page + 1) * 8)
-							inventoryP.add(invButtons.get(i));
-						else
-							inventoryP.remove(invButtons.get(i));
-					((JButton)e.getSource()).setName(Integer.toString(page+1));
-				}
-				inventoryP.repaint();
-				inventoryP.revalidate();
-			}
-		});
-		if (invButtons.size() > 8)
-			inventoryP.add(nextB);
-
-		MouseMotionListener mouseOver = new MouseMotionListener() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				text1.setText("");
-				text2.setText("");
-			}
-
-			@Override
-			public void mouseDragged(MouseEvent e) {
-
-			}
-		};
-
-		JButton continueB = new JButton("BACK");
-		continueB.setBounds(450, 400, 100, 30);
-		continueB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				inventoryP.removeMouseMotionListener(mouseOver);
-				playerAction();
-			}
-		});
-		inventoryP.add(continueB);
-
-		inventoryP.addMouseMotionListener(mouseOver);
-	}
-	
 	//Sets target of attack
-	private void setTarget(int range, String[] target)
-    {
+	private void setTarget(int range, String[] target) {
         combatP.removeAll();
         int playerX = 0, playerY = 0;
         for (int x = 0; x < width; x++)
@@ -611,6 +423,7 @@ public class Combat
         combatP.revalidate();
         combatP.repaint();
     }
+	
 
 	//Player chooses movement
 	private void setMovement(int range, int startingX, int startingY) {
@@ -668,6 +481,7 @@ public class Combat
 
         
 	}
+	
 	
 	//Calculates outcome of player choices
 	private void outcome(Enemy[] target) {
@@ -732,6 +546,7 @@ public class Combat
 		combatP.repaint();
 		combatP.revalidate();
 	}
+	
 	
 	//Calculates non-player choices
 	private void outcome() {
@@ -945,6 +760,7 @@ public class Combat
 		
 	}
 	
+	
 	//Resets grid to default state
 	private void resetGrid() {
 		//TODO
@@ -964,6 +780,7 @@ public class Combat
                 combatP.add(gridButton[x][y]);
             }
 	}
+	
 	
 	//Player wins
 	private void victory() {
@@ -998,6 +815,7 @@ public class Combat
 
 		
 	}
+	
 
 	//Player loses
 	private void defeat() {
@@ -1028,6 +846,7 @@ public class Combat
 
 		
 	}
+	
 
 	//Grid buttons
     private class Grid extends JButton {

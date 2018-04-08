@@ -21,10 +21,11 @@ public class Town
 	private Events events;
 	private MainFrame mainFrame;
 	private JPanel townP;
+	private JPanel shopP;
+	private JPanel itemP;
 	private Player player;
 	
-	public Town(MainFrame mainFrame, Events events)
-	{
+	public Town(MainFrame mainFrame, Events events) {
 		this.events = events;
 		this.mainFrame = mainFrame;
 		
@@ -34,108 +35,92 @@ public class Town
 		
 	}
 	
-	public void setPlayer(Player player)
-	{
+	public void setPlayer(Player player) {
 		this.player = player;
 	}
 	
-	public void townName1()
-	{
-		mainFrame.setContentPane(townP);
+	public void townName1() {		
 		//Create Shop JPanel
-		JPanel shopP = new JPanel();
+		shopP = new JPanel();
 		shopP.setLayout(null);
 		shopP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+		shopP.setVisible(false);
+		mainFrame.setContentPane(shopP);
 		
-		JButton equipment1B = new JButton("Test Helmet");
-		equipment1B.setBounds(10, 400, 100, 30);
-		equipment1B.addActionListener(new ActionListener()
-		{
+		JButton[] equipment = new JButton[3];
+		
+		equipment[0] = new JButton("Test Helmet");
+		equipment[0].addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				equipmentBought(shopP, new Equipment("Test Helmet", "A helmet made for testing", "HELMET", 0));
+			public void actionPerformed(ActionEvent e) {
+				equipmentBought(new Equipment("Test Helmet", "A helmet made for testing", "HELMET", 0));
 			}
 		});
-		shopP.add(equipment1B);
 		
-		JButton equipment2B = new JButton("Test Chest");
-		equipment2B.setBounds(120, 400, 100, 30);
-		equipment2B.addActionListener(new ActionListener()
-		{
+		equipment[1] = new JButton("Test Chest");
+		equipment[1].addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				equipmentBought(shopP, new Equipment("Test Chest", "A chest made for testing", "CHEST", 0));
+			public void actionPerformed(ActionEvent e) {
+				equipmentBought(new Equipment("Test Chest", "A chest made for testing", "CHEST", 0));
 			}
 		});
-		shopP.add(equipment2B);
 		
-		JButton equipment3B = new JButton("Test Sword");
-		equipment3B.setBounds(230, 400, 100, 30);
-		equipment3B.addActionListener(new ActionListener()
-		{
+		equipment[2] = new JButton("Test Sword");
+		equipment[2].addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				equipmentBought(shopP, new Equipment("Test Sword", "A sword made for testing", "WEAPON", 0));
+			public void actionPerformed(ActionEvent e) {
+				equipmentBought(new Equipment("Test Sword", "A sword made for testing", "WEAPON", 0));
 			}
 		});
-		shopP.add(equipment3B);
 		
 		JButton backShopB = new JButton("BACK");
-		backShopB.setBounds(450, 400, 100, 30);
-		backShopB.addActionListener(new ActionListener()
-		{
+		backShopB.setBounds(mainFrame.backButtonLoc());
+		backShopB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				mainFrame.setContentPane(townP);
 			}
 		});
 		shopP.add(backShopB);
+		
+		mainFrame.buttons(equipment);
+		townP.setVisible(false);
+		mainFrame.setContentPane(townP);
+		shopP.setVisible(true);
 		
 		//Create town JPanel
 		JLabel townNameL = new JLabel("Welcome to Introitus Village");
 		townNameL.setBounds(10, 10, 300, 30);
 		townP.add(townNameL);
 		
-		JButton shopB = new JButton("SHOP");
-		shopB.setBounds(10, 400, 100, 30);
-		shopB.addActionListener(new ActionListener()
-		{
+		JButton[] townB = new JButton[1];
+		
+		townB[0] = new JButton("SHOP");
+		townB[0].addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				mainFrame.setContentPane(shopP);
 			}
 		});
-		townP.add(shopB);
 		
 		JButton returnB = new JButton("RETURN");
-		returnB.setBounds(450, 400, 100, 30);
-		returnB.addActionListener(new ActionListener()
-		{
+		returnB.setBounds(mainFrame.backButtonLoc());
+		returnB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				events.mainScreen();
 			}
 		});
 		townP.add(returnB);
 		
-		townP.repaint();
-		townP.revalidate();
+		mainFrame.buttons(townB);
+		
+		townP.setVisible(true);
 	}
 	
-	private void equipmentBought(JPanel panel, Equipment equip)
-	{
+	private void equipmentBought(Equipment equip) {
 		//Finish editing
-		System.out.println(equip.getName());
-		System.out.println(equip.getType());
-		player.addItem(equip);
-		
-		JPanel itemP = new JPanel();
+		itemP = new JPanel();
 		itemP.setLayout(null);
 		itemP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 		mainFrame.setContentPane(itemP);
@@ -145,17 +130,15 @@ public class Town
 		itemP.add(itemL);
 		
 		JButton continueB = new JButton("CONTINUE");
-		continueB.setBounds(450, 400, 100, 30);
-		continueB.addActionListener(new ActionListener()
-		{
+		continueB.setBounds(mainFrame.backButtonLoc());
+		continueB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				mainFrame.setContentPane(panel);
+			public void actionPerformed(ActionEvent e) {
+				player.addItem(equip);
+				mainFrame.setContentPane(shopP);
 			}
 		});
 		itemP.add(continueB);
-		
 		
 	}
 }

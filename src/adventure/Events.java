@@ -25,8 +25,7 @@ public class Events
 	private MainFrame mainFrame;
 	private JPanel eventsP;
 	
-	public Events(MainFrame mainFrame)
-	{
+	public Events(MainFrame mainFrame) {
 		mainFrame.setVisible(false);
 		dungeon = new Dungeon(mainFrame, this);
 		town = new Town(mainFrame, this);
@@ -44,8 +43,7 @@ public class Events
 		title.titleScreen();
 	}
 	
-	public void setPlayer(Player player)
-	{
+	public void setPlayer(Player player) {
 		combat.setPlayer(player);
 		mainGame.setPlayer(player);
 		town.setPlayer(player);
@@ -53,26 +51,27 @@ public class Events
 	}
 	
 	//Switches game state to mainGame
-	public void mainScreen()
-	{
+	public void mainScreen() {
 		mainGame.mainScreen();
 	}
 	
-	public void event(String info, String name)
-	{
+	public void event(String info, String name) {
+		mainFrame.setContentPane(eventsP);
 		if (info.equalsIgnoreCase("town"))
 			town(name);
+		if (info.equalsIgnoreCase("explore"))
+			explore(name);
+		if (info.equalsIgnoreCase("dungeon"))
+			dungeon(name);
 	}
 	
-	private void explore(ActionListener al, String location)
-	{	
+	private void explore(String location) {	
 		JButton continueB;
 		JLabel foundL;
 		JLabel enemyL;
 		Enemy[] enemy;
 		
-		switch (location.toUpperCase())
-		{
+		switch (location.toUpperCase()) {
 			case "THE WALL":
 				enemy = new Enemy[]{new Enemy("The Great Wall of America", 10, "Grey", "Grey", 75, 3, 2, 3)};
 				
@@ -82,7 +81,13 @@ public class Events
 				
 				continueB = new JButton("CONTINUE");
 				continueB.setBounds(400, 400, 100, 30);
-				continueB.addActionListener(al);
+				continueB.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						eventsP.removeAll();
+						combat(enemy, 12, 12, 2);
+					}
+				});
 				eventsP.add(continueB);
 				break;
 			case "BORDER CROSSING":
@@ -98,7 +103,13 @@ public class Events
 				
 				continueB = new JButton("CONTINUE");
 				continueB.setBounds(400, 400, 100, 30);
-				continueB.addActionListener(al);
+				continueB.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						eventsP.removeAll();
+						combat(enemy, 12, 12, 2);
+					}
+				});
 				eventsP.add(continueB);
 				break;
 				
@@ -109,13 +120,11 @@ public class Events
 				
 				JButton returnB = new JButton("RETURN");
 				returnB.setBounds(400, 400, 100, 30);
-				returnB.addActionListener(new ActionListener()
-				{
+				returnB.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						mainFrame.remove(eventsP);
-						//TODO switch to mainGame
+					public void actionPerformed(ActionEvent e) {
+						eventsP.removeAll();
+						mainGame.mainScreen();
 					}
 				});
 				eventsP.add(returnB);
@@ -127,18 +136,15 @@ public class Events
 		eventsP.revalidate();
 	}
 	
-	private void town(String info)
-	{
+	private void town(String info) {
 		town.townName1();
 	}
 	
-	private void dungeon(String info)
-	{
+	private void dungeon(String info) {
 		dungeon.dungeon(0);
 	}
 	
-	private void combat(Enemy[] enemy, int w, int h, int obstacleNum)
-	{
+	private void combat(Enemy[] enemy, int w, int h, int obstacleNum) {
 		combat.initiateCombat(enemy, w, h, obstacleNum);
 	}
 }

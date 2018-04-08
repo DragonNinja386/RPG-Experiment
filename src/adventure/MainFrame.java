@@ -2,8 +2,11 @@
 
 package adventure;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -18,6 +21,7 @@ public class MainFrame extends JFrame
 
 	//Other variables
 	private JButton nextB;
+	private final Rectangle RECT = new Rectangle(450, 400, 100, 30);
 	
 	public MainFrame() {
 		super("Cool Game!");
@@ -51,6 +55,19 @@ public class MainFrame extends JFrame
 				jb[i].setBounds(110 * (a - 5) + 10, 400, 100, 30);
 			this.getContentPane().add(jb[i]);
 			jb[i].setVisible(false);
+			jb[i].addKeyListener(new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent arg0) {
+					//TODO make this work
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {}
+
+				@Override
+				public void keyTyped(KeyEvent e) {}
+				
+			});
 		}
 		for (int i = 0; i < 8; i++)
 			if (i < jb.length)
@@ -108,13 +125,16 @@ public class MainFrame extends JFrame
 				((JButton)e.getSource()).setName(Integer.toString(pageNum));
 				
 				for (int i = 0; i < jb.size(); i++)
-				{
 					if (i >= 8 * (pageNum - 1) && i <= pageNum * 8)
 						jb.get(i).setVisible(true);
 					else
 						jb.get(i).setVisible(false);
-				}
+				
 			}
 		});
+	}
+	
+	public Rectangle backButtonLoc() {
+		return RECT;
 	}
 }

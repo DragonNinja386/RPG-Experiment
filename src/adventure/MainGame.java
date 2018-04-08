@@ -23,12 +23,13 @@ import adventure.item.*;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class MainGame
-{
+public class MainGame {
 	private Events events;
 	private MainFrame mainFrame;
 	private JPanel mainGameP;
 	private JPanel invP;
+	private JPanel statusP;
+	private JPanel exploreP;
 	private Player player;
 	
 	//html
@@ -40,29 +41,30 @@ public class MainGame
 	private ArrayList<JButton> invButtons;
 	private JButton[] locationButtons;
 	
-	public MainGame(MainFrame mainFrame, Events events)
-	{
+	public MainGame(MainFrame mainFrame, Events events) {
 		this.events = events;
 		this.mainFrame = mainFrame;
 		
 		initMainGame();
-		initInv();
+		
+		statusP = new JPanel();
+		statusP.setLayout(null);
+		statusP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+		
+		invP = new JPanel();
+		invP.setLayout(null);
+		invP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+		
+		exploreP = new JPanel();
+		exploreP.setLayout(null);
+		exploreP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
 		
 		mainScreen();
 	}
 	
-	public void setPlayer(Player player)
-	{
-		this.player = player;
-	}
+	public void setPlayer(Player player) { this.player = player; }
 	
-	public void mainScreen() {
-		mainFrame.setContentPane(mainGameP);
-		
-	}
-	
-	private void initMainGame()
-	{
+	private void initMainGame() {
 		mainGameP = new JPanel();
 		mainGameP.setLayout(null);
 		mainGameP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
@@ -100,21 +102,99 @@ public class MainGame
 		buttons[3].addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					statusScreen();
+					openStatus();
 				}
 			});
 		mainFrame.buttons(buttons);
 	}
 	
-	private void initInv() {
-		invP = new JPanel();
-		invP.setLayout(null);
-		invP.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-		mainFrame.setContentPane(invP);
+	public void mainScreen() {
+		mainFrame.setContentPane(mainGameP);
+	}
+	
+	private void openStatus() {
+		statusP.setVisible(false);
+		mainFrame.setContentPane(statusP);
+		
+		JLabel currentL = new JLabel();
+		currentL.setText("This is your equipment");
+		currentL.setBounds(300, 10, 300, 30);
+		statusP.add(currentL);
+		
+		JLabel text = new JLabel();
+		text.setBounds(10, 280, 400, 200);
+		statusP.add(text);
+		
+		JLabel helmetL = new JLabel("HELMET");
+		helmetL.setBounds(10,10,100,30);
+		statusP.add(helmetL);
+		
+		JLabel chestL = new JLabel("CHEST");
+		chestL.setBounds(10,100,100,30);
+		statusP.add(chestL);
+		
+		JLabel weaponL = new JLabel("WEAPON");
+		weaponL.setBounds(10,190,100,30);
+		statusP.add(weaponL);
+		
+		JLabel[] equipmentL = new JLabel[player.getEquip().length];
+		for (int i = 0; i < (equipmentL.length); i++)
+			//Checks if equipment exists
+			if (player.getEquip()[i] != null) {
+				//Creates empty JLabel to add to array
+				JLabel equipL = new JLabel();
+				equipmentL[i] = equipL;
+				
+				//Creates equipment data JLabels
+				equipmentL[i].setText(player.getEquip()[i].getName());
+				equipmentL[i].setBounds(10,50 + (90 * i),100,30);
+				int index = i;
+				equipmentL[i].addMouseMotionListener(new MouseMotionListener() {
+					@Override
+					public void mouseMoved(MouseEvent e) {
+						text.setText(html1 + 200 + html2 + player.getEquip()[index].getDesc());
+					}
+	
+					@Override
+					public void mouseDragged(MouseEvent e) {
+						
+					}
+				});
+				statusP.add(equipmentL[i]);
+			}
+		
+		MouseMotionListener mouseOver = new MouseMotionListener() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				text.setText("");
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				
+			}
+		};
+		
+		//Create back to mainScreen button
+		JButton continueB = new JButton("BACK");
+		continueB.setBounds(mainFrame.backButtonLoc());
+		continueB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				statusP.removeMouseMotionListener(mouseOver);
+				statusP.removeAll();
+				mainScreen();
+			}
+		});
+		statusP.add(continueB);
+		
+		statusP.addMouseMotionListener(mouseOver);
+		
+		statusP.setVisible(true);
 	}
 	
 	private void openInv() {
-		invP.removeAll();
+		invP.setVisible(false);
 		mainFrame.setContentPane(invP);
 		
 		pageNumber = 1;
@@ -195,18 +275,15 @@ public class MainGame
 							invButtons.get(index).addMouseMotionListener(invMouse);
 							invP.repaint();
 							invP.revalidate();
-						}
-						else {
+						} else {
 							player.getInventory().remove(index);
 							invP.remove(invButtons.get(index));
 						}
 						invP.repaint();
 						invP.revalidate();
-					}
-					else if (player.getInventory().get(index).getClass() == Item.class) {
+					} else if (player.getInventory().get(index).getClass() == Item.class) {
 						
-					}
-					else {
+					} else {
 						System.out.println("Item error 404, item class doesn't exist");
 						System.out.println(((JButton)e.getSource()).getName());
 					}
@@ -230,11 +307,12 @@ public class MainGame
 		};
 		
 		JButton backB = new JButton("BACK");
-		backB.setBounds(450, 400, 100, 30);
+		backB.setBounds(mainFrame.backButtonLoc());
 		backB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				invP.removeMouseMotionListener(mouseOver);
+				invP.removeAll();
 				mainScreen();
 			}
 		});
@@ -242,21 +320,20 @@ public class MainGame
 		
 		invP.addMouseMotionListener(mouseOver);
 		
+		invP.setVisible(true);
 	}
 	
-	private void explore()
-	{
-		mainGameP.removeAll();
-		pageNumber = 1;
+	private void explore() {
+		exploreP.setVisible(false);
+		mainFrame.setContentPane(exploreP);
 		
 		JLabel currentL = new JLabel();
 		currentL.setText("Your current location is at the southern part of the country");
 		currentL.setBounds(100, 100, 300, 30);
-		mainGameP.add(currentL);
+		exploreP.add(currentL);
 		
 		locationButtons = new JButton[4];
-		if (player.getLocation().equals("SOUTH"))
-		{
+		if (player.getLocation().equals("SOUTH")) {
 			locationButtons[0] = new JButton("THE WALL");
 			locationButtons[1] = new JButton("BORDER CROSSING");
 			locationButtons[2] = new JButton("TOWN1");
@@ -267,99 +344,28 @@ public class MainGame
 			locationButtons[3].setName("DUNGEON");
 		}
 		
-		for (i = 0, a = 0; i < locationButtons.length; i++, a++)
-		{
-			if (a == 4)
-			{
-				a = 0;
-			}
-			if (i < 4)
-			{
-				locationButtons[i].setBounds((110 * a) + 10,360,100,30);
-				mainGameP.add(locationButtons[i]);
-			}
-			else if (i < 8)
-			{
-				locationButtons[i].setBounds((110 * a) + 10,400,100,30);
-				mainGameP.add(locationButtons[i]);
-			}
-			else if (i % 8 < 4)
-			{
-				locationButtons[i].setBounds((110 * a) + 10,360,100,30);
-			}
-			else
-			{
-				locationButtons[i].setBounds((110 * a) + 10,400,100,30);
-			}
-			locationButtons[i].addActionListener(new ActionListener()
-			{
+		mainFrame.buttons(locationButtons);
+		
+		for (i = 0; i < locationButtons.length; i++)
+			locationButtons[i].addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					events.event(((JButton)e.getSource()).getName(), ((JButton)e.getSource()).getText());
 				}
 			});
-		}
-		
-		JButton nextB = new JButton("NEXT");
-		nextB.setBounds(450, 360, 100, 30);
-		nextB.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if (pageNumber == ((locationButtons.length - 1) / 8) + 1)
-				{
-					for (int i = 0; i < locationButtons.length; i++)
-					{
-						if (i < 8)
-						{
-							mainGameP.add(locationButtons[i]);
-						}
-						else
-						{
-							mainGameP.remove(locationButtons[i]);
-						}
-					}
-					pageNumber = 1;
-				}
-				else
-				{
-					for (int i = 0; i < locationButtons.length; i++)
-					{
-						if (i >= 8 * pageNumber && i <= (pageNumber + 1) * 8)
-						{
-							mainGameP.add(locationButtons[i]);
-						}
-						else
-						{
-							mainGameP.remove(locationButtons[i]);
-						}
-					}
-					pageNumber++;
-				}
-				mainGameP.repaint();
-				mainGameP.revalidate();
-			}
-		});
-		if (locationButtons.length > 8)
-		{
-			mainGameP.add(nextB);
-		}
 		
 		JButton continueB = new JButton("BACK");
-		continueB.setBounds(450, 400, 100, 30);
-		continueB.addActionListener(new ActionListener()
-		{
+		continueB.setBounds(mainFrame.backButtonLoc());
+		continueB.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
+				exploreP.removeAll();
 				mainScreen();
 			}
 		});
-		mainGameP.add(continueB);
+		exploreP.add(continueB);
 		
-		mainGameP.repaint();
-		mainGameP.revalidate();
+		exploreP.setVisible(true);
 	}
 	
 	private void saveGame()
@@ -369,10 +375,8 @@ public class MainGame
 	    dialog.setVisible(true);
 	    String file = dialog.getFile();
 	    System.out.println(file + " chosen.");
-	    if (file != null)
-	    {
-			try
-			{ 
+	    if (file != null) {
+			try { 
 				FileOutputStream saveFile = new FileOutputStream(file);
 				ObjectOutputStream save = new ObjectOutputStream(saveFile);
 				
@@ -381,113 +385,18 @@ public class MainGame
 				
 				save.close();
 				saveFile.close();
-			}
-			catch(Exception exc)
-			{
+			} catch(Exception exc) {
 				exc.printStackTrace();
 			}
-	    }
-	    else
-	    {
+	    } else {
 	    	JLabel errorL = new JLabel("Save not found");
 	    	errorL.setBounds(200, 200, 100, 30);
 	    	mainGameP.add(errorL);
 	    	mainGameP.repaint();
 	    	mainGameP.revalidate();
 	    }
-	}
-	
-	private void statusScreen()
-	{
-		mainGameP.removeAll();
-		
-		JLabel currentL = new JLabel();
-		currentL.setText("This is your equipment");
-		currentL.setBounds(300, 10, 300, 30);
-		mainGameP.add(currentL);
-		
-		JLabel text = new JLabel();
-		text.setBounds(10, 280, 400, 200);
-		mainGameP.add(text);
-		
-		JLabel helmetL = new JLabel("HELMET");
-		helmetL.setBounds(10,10,100,30);
-		mainGameP.add(helmetL);
-		
-		JLabel chestL = new JLabel("CHEST");
-		chestL.setBounds(10,100,100,30);
-		mainGameP.add(chestL);
-		
-		JLabel weaponL = new JLabel("WEAPON");
-		weaponL.setBounds(10,190,100,30);
-		mainGameP.add(weaponL);
-		
-		JLabel[] equipmentL = new JLabel[player.getEquip().length];
-		for (int i = 0; i < (equipmentL.length); i++)
-		{
-			//Checks if equipment exists
-			if (player.getEquip()[i] != null)
-			{
-				//Creates empty JLabel to add to array
-				JLabel equipL = new JLabel();
-				equipmentL[i] = equipL;
-				
-				//Creates equipment data JLabels
-				equipmentL[i].setText(player.getEquip()[i].getName());
-				equipmentL[i].setBounds(10,50 + (90 * i),100,30);
-				int index = i;
-				equipmentL[i].addMouseMotionListener(new MouseMotionListener()
-				{
-					@Override
-					public void mouseMoved(MouseEvent e)
-					{
-						text.setText(html1 + 200 + html2 + player.getEquip()[index].getDesc());
-					}
-	
-					@Override
-					public void mouseDragged(MouseEvent e)
-					{
-						
-					}
-				});
-				mainGameP.add(equipmentL[i]);
-			}
-		}
-		
-		MouseMotionListener mouseOver = new MouseMotionListener()
-		{
-			@Override
-			public void mouseMoved(MouseEvent e)
-			{
-				text.setText("");
-			}
-
-			@Override
-			public void mouseDragged(MouseEvent e)
-			{
-				
-			}
-		};
-		
-		//Create back to mainScreen button
-		JButton continueB = new JButton("BACK");
-		continueB.setBounds(450, 400, 100, 30);
-		continueB.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				mainGameP.removeMouseMotionListener(mouseOver);
-				mainScreen();
-			}
-		});
-		mainGameP.add(continueB);
-		
-		mainGameP.addMouseMotionListener(mouseOver);
-		
-		//Updates Screen
-		mainGameP.repaint();
-		mainGameP.revalidate();
+	    
+	    
 	}
 	
 }
