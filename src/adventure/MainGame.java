@@ -37,8 +37,6 @@ public class MainGame {
     private String html2 = "px'>";
 	
 	//Loop Variables
-	private int i, a, pageNumber;
-	private ArrayList<JButton> invButtons;
 	private JButton[] locationButtons;
 	
 	public MainGame(MainFrame mainFrame, Events events) {
@@ -197,47 +195,25 @@ public class MainGame {
 		invP.setVisible(false);
 		mainFrame.setContentPane(invP);
 		
-		pageNumber = 1;
-		
 		JLabel currentL = new JLabel();
 		currentL.setText("This is your inventory");
 		currentL.setBounds(300, 10, 300, 30);
 		invP.add(currentL);
 		
 		JLabel text1 = new JLabel();
-		text1.setBounds(10, 10, 400, 30);
-		invP.add(text1);
-		
 		JLabel text2 = new JLabel();
-		text2.setBounds(10, 60, 400, 300);
-		invP.add(text2);
+		mainFrame.addText(text1, text2);
 		
-		invButtons = new ArrayList<JButton>();
-		for (i = 0, a = 0; i < player.getInventory().size(); i++, a++) {
+		ArrayList<JButton> invButtons = new ArrayList<JButton>();
+		for (int i = 0; i < player.getInventory().size(); i++) {
 			invButtons.add(new JButton(player.getInventory().get(i).getName()));
 			invButtons.get(i).setName(Integer.toString(i));
-			if (a == 4)
-				a = 0;
-			MouseMotionListener invMouse = new MouseMotionListener() {
-				Item item = player.getInventory().get(i);
-				@Override
-				public void mouseMoved(MouseEvent e) {
-					text1.setText(item.getName());
-					text2.setText(html1 + 200 + html2 + item.getDesc());
-				}
-
-				@Override
-				public void mouseDragged(MouseEvent e) {
-					
-				}
-			};
 			invButtons.get(i).addActionListener(new ActionListener() {
-				int index = i;
-				Equipment equip;
-				Equipment tempEquip = null;
-				
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					Equipment equip;
+					Equipment tempEquip = null;
+					int index = Integer.parseInt(((JButton)e.getSource()).getName());
 					if (player.getInventory().get(index) instanceof Equipment) {
 						//Grabs Equipment from inventory index
 						equip = (Equipment)player.getInventory().get(index);
@@ -259,22 +235,20 @@ public class MainGame {
 							text1.setText(tempEquip.getName());
 							text2.setText(tempEquip.getDesc());
 							invButtons.get(index).setText(tempEquip.getName());
-							invButtons.get(index).removeMouseMotionListener(invMouse);
+							for (MouseMotionListener l : invButtons.get(index).getMouseMotionListeners())
+								invButtons.get(index).removeMouseMotionListener(l);
 							MouseMotionListener invMouse = new MouseMotionListener() {
-								Equipment equipTemp = tempEquip;
 								@Override
 								public void mouseMoved(MouseEvent e) {
+									Equipment equipTemp = (Equipment)player.getInventory().get(Integer.parseInt(((JButton)e.getSource()).getName()));
 									text1.setText(equipTemp.getName());
 									text2.setText(html1 + 200 + html2 + equipTemp.getDesc());
 								}
+								
 								@Override
-								public void mouseDragged(MouseEvent e) {
-									
-								}
+								public void mouseDragged(MouseEvent e) {}
 							};
 							invButtons.get(index).addMouseMotionListener(invMouse);
-							invP.repaint();
-							invP.revalidate();
 						} else {
 							player.getInventory().remove(index);
 							invP.remove(invButtons.get(index));
@@ -289,7 +263,17 @@ public class MainGame {
 					}
 				}
 			});
-			invButtons.get(i).addMouseMotionListener(invMouse);
+			invButtons.get(i).addMouseMotionListener(new MouseMotionListener() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					Item item = player.getInventory().get(Integer.parseInt(((JButton)e.getSource()).getName()));
+					text1.setText(item.getName());
+					text2.setText(html1 + 200 + html2 + item.getDesc());
+				}
+
+				@Override
+				public void mouseDragged(MouseEvent e) {}
+			});
 		}
 		mainFrame.buttons(invButtons);
 		
@@ -346,7 +330,7 @@ public class MainGame {
 		
 		mainFrame.buttons(locationButtons);
 		
-		for (i = 0; i < locationButtons.length; i++)
+		for (int i = 0; i < locationButtons.length; i++)
 			locationButtons[i].addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

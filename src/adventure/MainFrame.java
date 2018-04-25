@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class MainFrame extends JFrame
 {
@@ -21,7 +22,7 @@ public class MainFrame extends JFrame
 
 	//Other variables
 	private JButton nextB;
-	private final Rectangle RECT = new Rectangle(450, 400, 100, 30);
+	private final Rectangle RECT = new Rectangle(450, 430, 100, 30);
 	
 	public MainFrame() {
 		super("Cool Game!");
@@ -50,9 +51,9 @@ public class MainFrame extends JFrame
 				numOfPages++;
 			}
 			if (a < 5)
-				jb[i].setBounds(110 * a + 10, 360, 100, 30);
+				jb[i].setBounds(110 * a + 10, 390, 100, 30);
 			else
-				jb[i].setBounds(110 * (a - 5) + 10, 400, 100, 30);
+				jb[i].setBounds(110 * (a - 5) + 10, 430, 100, 30);
 			this.getContentPane().add(jb[i]);
 			jb[i].setVisible(false);
 			jb[i].addKeyListener(new KeyListener() {
@@ -108,9 +109,9 @@ public class MainFrame extends JFrame
 				numOfPages++;
 			}
 			if (a < 5)
-				jb.get(i).setBounds(110 * a + 10, 360, 100, 30);
+				jb.get(i).setBounds(110 * a + 10, 390, 100, 30);
 			else
-				jb.get(i).setBounds(110 * (a - 5) + 10, 400, 100, 30);
+				jb.get(i).setBounds(110 * (a - 5) + 10, 430, 100, 30);
 			this.getContentPane().add(jb.get(i));
 		}
 		
@@ -136,5 +137,17 @@ public class MainFrame extends JFrame
 	
 	public Rectangle backButtonLoc() {
 		return RECT;
+	}
+
+	public void addText(JLabel name) {
+		name.setBounds(10, 10, 400, 30);
+		this.getContentPane().add(name);
+	}
+
+	public void addText(JLabel name, JLabel desc) {
+		name.setBounds(10, 10, 400, 30);
+		this.getContentPane().add(name);
+		desc.setBounds(10, 60, 400, 300);
+		this.getContentPane().add(desc);
 	}
 }

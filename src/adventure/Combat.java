@@ -20,6 +20,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 
 import adventure.character.*;
+import adventure.character.Character;
 import adventure.item.*;
 
 public class Combat
@@ -64,6 +65,11 @@ public class Combat
 
     private Grid[][] gridButton;
 
+    /**
+     * Constructor to initialize the Combat object
+     * @param mainFrame Lets Combat interact with the MainFrame object
+     * @param events Gives the Combat object access to the methods in Events
+     */
     public Combat(MainFrame mainFrame, Events events) {
         //Initialize variables
     	this.events = events;
@@ -106,7 +112,7 @@ public class Combat
             } while (gridButton[x][y] != null);
             gridButton[x][y] = new Grid("E");
             gridButton[x][y].setNum(i);
-            gridButton[x][y].setEnemy(this.enemy[i]);
+            //TODO 
         }
         //Player Space
         gridButton[random.nextInt(width / 4) + (width * 3 / 4) - 1][random.nextInt(height / 2) + height / 4] = new Grid("O");
@@ -119,29 +125,22 @@ public class Combat
             }
 
         spellP.setVisible(false);
-        statusP.setVisible(false);
         spellSetup();
-        statusSetup();
         mainFrame.setContentPane(combatP);
-        statusP.setVisible(true);
         spellP.setVisible(true);
         playerAction();
     }
-    
-    
+        
     private void spellSetup() {
 		mainFrame.setContentPane(spellP);
 		
 		JLabel spellNameL = new JLabel();
-		spellNameL.setBounds(10, 10, 400, 30);
-		spellP.add(spellNameL);
-
-		JLabel SpellDescL = new JLabel();
-		SpellDescL.setBounds(10, 60, 400, 300);
-		spellP.add(SpellDescL);
+		JLabel spellDescL = new JLabel();
+		mainFrame.addText(spellNameL, spellDescL);
 
 		ArrayList<JButton> spellButtons = new ArrayList<JButton>();
 		for (int i = 0; i < player.getSpells().size(); i++) {
+			spellButtons.add(new JButton(player.getSpells().get(i).getName()));
 			spellButtons.get(i).setName(Integer.toString(i));
 			spellButtons.get(i).addActionListener(new ActionListener() {
 				@Override
@@ -156,31 +155,28 @@ public class Combat
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					spellNameL.setText(player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName())).getName());
-					SpellDescL.setText(html1 + "200" + html2 + player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName())).getDesc());
+					spellDescL.setText(html1 + "200" + html2 + player.getSpells().get(Integer.parseInt(((JButton)e.getSource()).getName())).getDesc());
 				}
 
 				@Override
-				public void mouseDragged(MouseEvent e) {
-
-				}
+				public void mouseDragged(MouseEvent e) {}
 			});
 		}
+		mainFrame.buttons(spellButtons);
 
 		spellP.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				spellNameL.setText("");
-				SpellDescL.setText("");
+				spellDescL.setText("");
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
-
-			}
+			public void mouseDragged(MouseEvent e) {}
 		});
 
 		JButton spellBackB = new JButton("BACK");
-		spellBackB.setBounds(450, 400, 100, 30);
+		spellBackB.setBounds(mainFrame.backButtonLoc());
 		spellBackB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -189,9 +185,10 @@ public class Combat
 		});
 		spellP.add(spellBackB);
     }
-    
-    
-    private void statusSetup() {
+       
+    private void openStatus() {
+		mainFrame.setContentPane(statusP);
+
     	JLabel currentL = new JLabel();
 		currentL.setText("This is your equipment");
 		currentL.setBounds(300, 10, 300, 30);
@@ -246,9 +243,7 @@ public class Combat
 					}
 
 					@Override
-					public void mouseDragged(MouseEvent e) {
-
-					}
+					public void mouseDragged(MouseEvent e) {}
 				});
 				statusP.add(equipmentL[i]);
 			}
@@ -261,9 +256,7 @@ public class Combat
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
-
-			}
+			public void mouseDragged(MouseEvent e) {}
 		});
 
 		//Create back to mainScreen button
@@ -272,6 +265,7 @@ public class Combat
 		continueB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				statusP.removeAll();
 				mainFrame.setContentPane(combatP);
 			}
 		});
@@ -280,10 +274,72 @@ public class Combat
     }
     
     private void openInventory() {
-    	
+    	inventoryP.setVisible(false);
+		mainFrame.setContentPane(inventoryP);
+		
+		JLabel currentL = new JLabel();
+		currentL.setText("This is your inventory");
+		currentL.setBounds(300, 10, 300, 30);
+		inventoryP.add(currentL);
+		
+		JLabel text1 = new JLabel();
+		JLabel text2 = new JLabel();
+		mainFrame.addText(text1, text2);
+		
+		
+		ArrayList<JButton> invButtons = new ArrayList<JButton>();
+		for (int i = 0; i < player.getInventory().size(); i++) {
+			invButtons.add(new JButton(player.getInventory().get(i).getName()));
+			invButtons.get(i).setName(Integer.toString(i));
+			invButtons.get(i).addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("TO BE IMPLEMENTED");
+				}
+			});
+			invButtons.get(i).addMouseMotionListener(new MouseMotionListener() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					Item item = player.getInventory().get(Integer.parseInt(((JButton)e.getSource()).getName()));
+					text1.setText(item.getName());
+					text2.setText(html1 + 200 + html2 + item.getDesc());
+				}
+
+				@Override
+				public void mouseDragged(MouseEvent e) {}
+			});
+		}
+		mainFrame.buttons(invButtons);
+		
+		MouseMotionListener mouseOver = new MouseMotionListener() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				text1.setText("");
+				text2.setText("");
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				
+			}
+		};
+		
+		JButton backB = new JButton("BACK");
+		backB.setBounds(mainFrame.backButtonLoc());
+		backB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainFrame.setContentPane(combatP);
+				inventoryP.removeAll();
+			}
+		});
+		inventoryP.add(backB);
+		
+		inventoryP.addMouseMotionListener(mouseOver);
+		
+		inventoryP.setVisible(true);
     }
-    
-    
+     
     //Player makes combat choice
 	private void playerAction() {
 		combatP.removeAll();
@@ -358,7 +414,7 @@ public class Combat
 		combatB[4].addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mainFrame.setContentPane(statusP);
+				openStatus();
 			}
 		});
 		
@@ -366,7 +422,6 @@ public class Combat
 		
 	}
 	
-
 	//Sets target of attack
 	private void setTarget(int range, String[] target) {
         combatP.removeAll();
@@ -424,7 +479,6 @@ public class Combat
         combatP.repaint();
     }
 	
-
 	//Player chooses movement
 	private void setMovement(int range, int startingX, int startingY) {
 		enemyTurn = new ArrayList<>();
@@ -481,8 +535,7 @@ public class Combat
 
         
 	}
-	
-	
+		
 	//Calculates outcome of player choices
 	private void outcome(Enemy[] target) {
 		combatP.removeAll();
@@ -546,8 +599,7 @@ public class Combat
 		combatP.repaint();
 		combatP.revalidate();
 	}
-	
-	
+		
 	//Calculates non-player choices
 	private void outcome() {
 		//TODO Enemy AI
@@ -760,7 +812,6 @@ public class Combat
 		
 	}
 	
-	
 	//Resets grid to default state
 	private void resetGrid() {
 		//TODO
@@ -780,7 +831,6 @@ public class Combat
                 combatP.add(gridButton[x][y]);
             }
 	}
-	
 	
 	//Player wins
 	private void victory() {
@@ -816,7 +866,6 @@ public class Combat
 		
 	}
 	
-
 	//Player loses
 	private void defeat() {
 		//TODO create lose message against multiple enemies
@@ -847,11 +896,9 @@ public class Combat
 		
 	}
 	
-
 	//Grid buttons
     private class Grid extends JButton {
-    	private Player player;
-    	private Enemy enemy;
+    	private Character character;
     	private String symbol;
     	private int enemyNum;
     	private int x;
@@ -881,16 +928,13 @@ public class Combat
 
         public String getSymbol() { return symbol; }
         
-        public int getNum() { return enemyNum; }
-        
-        public Enemy getEnemy() { return enemy; }
+        public int getNum()
+        { return enemyNum; }
 
         public void setSymbol(String s) {
         	setText(s);
         	symbol = s;
         }
-        
-        public void setEnemy(Enemy e) { enemy = e; }
         
         public void assign(int xNew, int yNew) {
         	x = xNew;

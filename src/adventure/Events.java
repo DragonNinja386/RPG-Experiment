@@ -25,6 +25,10 @@ public class Events
 	private MainFrame mainFrame;
 	private JPanel eventsP;
 	
+	  /**
+	   * Constructor to initialize the Events object and all objects that require the Events object
+	   * @param mainFrame Lets the Events object interact with the MainFrame object
+	   */
 	public Events(MainFrame mainFrame) {
 		mainFrame.setVisible(false);
 		dungeon = new Dungeon(mainFrame, this);
